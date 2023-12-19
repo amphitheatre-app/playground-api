@@ -1,6 +1,6 @@
 [package]
 name = "playground-api"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/amphitheatre-app/playground-api"
@@ -14,8 +14,8 @@ name = "playground"
 path = "src/lib.rs"
 
 [dependencies]
-amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.5.1" }
-amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.5.6" }
+amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.6.0" }
+amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.6.0" }
 anyhow = "1.0"
 axum = { version = "0.7.2" }
 clap = { version = "4.4.11", features = ["derive", "env"] }
