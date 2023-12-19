@@ -1,0 +1,16 @@
+name = "playground-api"
+version = "0.0.1"
+description = "Playground's backend, acting as a business agent between Playground and Amphitheatre Cloud"
+documentation = "https://github.com/amphitheatre-app/playground-api"
+repository = "https://github.com/amphitheatre-app/playground-api"
+license = "Apache-2.0"
+license-file = "LICENSE"
+keywords = ["api", "agent", "playground", "rest", "backend", "proxy", "rust-lang", "webapp", "axum"]
+categories = ["editor", "ide", "develop-tools"]
+
+[build]
+dockerfile = "Dockerfile"
+
+[deploy.env]
+AMP_PORT = "8080"
+AMP_SERVER = "http://api.amphitheatre.app:31700"
