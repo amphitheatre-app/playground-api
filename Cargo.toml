@@ -25,7 +25,7 @@ headers = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9.29"
-thiserror = "1.0.52"
+thiserror = "1.0.53"
 tokio = { version = "1.35.1", features = ["full"] }
 tokio-stream = "0.1"
 tower = { version = "0.4.13", features = ["full"] }
