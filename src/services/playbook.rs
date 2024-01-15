@@ -12,28 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::PlaybookSpec;
 use std::sync::Arc;
 
 use uuid::Uuid;
 
 use crate::context::Context;
+use crate::errors::ApiError;
 use crate::requests::playbook::{CreatePlaybookRequest, UpdatePlaybookRequest};
 use crate::services::Result;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
-    pub async fn get(_ctx: Arc<Context>, _id: Uuid) -> Result<PlaybookSpec> {
-        unimplemented!()
+    pub async fn get(ctx: Arc<Context>, id: Uuid) -> Result<PlaybookSpec> {
+        ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
     }
 
-    pub async fn delete(_ctx: Arc<Context>, _id: Uuid) -> Result<()> {
-        unimplemented!()
+    pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
+        ctx.client.playbooks().delete(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
     }
 
-    pub async fn create(_ctx: Arc<Context>, _req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
-        unimplemented!()
+    pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
+        let playbook_payload = PlaybookPayload {
+            title: req.title.clone(),
+            description: req.description.clone().unwrap_or_default(),
+            preface: req.preface.clone(),
+        };
+        ctx.client.playbooks().create(playbook_payload).map_err(ApiError::NotFoundPlaybook)
     }
 
     pub async fn update(_ctx: Arc<Context>, _id: Uuid, _req: &UpdatePlaybookRequest) -> Result<PlaybookSpec> {
