@@ -36,7 +36,7 @@ use crate::services::playbook::PlaybookService;
         content_type = "application/json"
     ),
     responses(
-        (status = 200, description = "Playbook created successfully", body = PlaybookSpec)
+        (status = 201, description = "Playbook created successfully", body = PlaybookResponse)
     ),
     tag = "Playbooks"
 )]
@@ -44,7 +44,7 @@ pub async fn create(
     State(ctx): State<Arc<Context>>,
     Json(req): Json<CreatePlaybookRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok((StatusCode::OK, Json(PlaybookService::create(ctx, &req).await?)))
+    Ok((StatusCode::CREATED, Json(PlaybookService::create(ctx, &req).await?)))
 }
 
 /// Returns a playbook detail.
@@ -54,7 +54,7 @@ pub async fn create(
         ("id" = Uuid, description = "The id of playbook"),
     ),
     responses(
-        (status = 200, description = "Playbook found successfully", body = PlaybookSpec),
+        (status = 200, description = "Playbook found successfully", body = PlaybookResponse),
         (status = 404, description = "Playbook not found"),
         (status = 500, description = "Internal Server Error"),
     ),
@@ -66,7 +66,7 @@ pub async fn detail(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
 
 /// Update a playbook.
 #[utoipa::path(
-    patch, path = "/v1/playbooks/{id}",
+    put, path = "/v1/playbooks/{id}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
     ),
@@ -76,7 +76,7 @@ pub async fn detail(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
         content_type = "application/json"
     ),
     responses(
-        (status = 200, description = "Playbook updated successfully", body = PlaybookSpec),
+        (status = 204, description = "Playbook updated successfully", body = PlaybookResponse),
         (status = 404, description = "Playbook not found")
     ),
     tag = "Playbooks"
@@ -104,5 +104,5 @@ pub async fn update(
 pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
     PlaybookService::delete(ctx, id).await?;
 
-    Ok(StatusCode::OK)
+    Ok(StatusCode::NO_CONTENT)
 }
