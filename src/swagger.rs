@@ -30,8 +30,23 @@ use crate::{handlers, requests, responses};
             requests::playbook::CreatePlaybookRequest,
             requests::playbook::UpdatePlaybookRequest,
             responses::playbook::PlaybookResponse,
-            amp_common::resource::PlaybookSpec,
+
             amp_common::resource::ActorSpec,
+            amp_common::resource::CharacterSpec,
+            amp_common::resource::Partner,
+            amp_common::resource::PlaybookSpec,
+            amp_common::resource::Preface,
+
+            amp_common::schema::Build,
+            amp_common::schema::BuildpacksConfig,
+            amp_common::schema::Deploy,
+            amp_common::schema::DockerfileConfig,
+            amp_common::schema::GitReference,
+            amp_common::schema::LocalPartner,
+            amp_common::schema::Metadata,
+            amp_common::schema::Port,
+            amp_common::schema::RegisteredPartner,
+            amp_common::schema::Service,
         )
     ),
     tags(
