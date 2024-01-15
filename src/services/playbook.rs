@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::resource::PlaybookSpec;
 use std::sync::Arc;
 
 use uuid::Uuid;
 
 use crate::context::Context;
 use crate::requests::playbook::{CreatePlaybookRequest, UpdatePlaybookRequest};
-use crate::responses::playbook::PlaybookResponse;
 use crate::services::Result;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
-    pub async fn get(_ctx: Arc<Context>, _id: Uuid) -> Result<PlaybookResponse> {
+    pub async fn get(_ctx: Arc<Context>, _id: Uuid) -> Result<PlaybookSpec> {
         unimplemented!()
     }
 
@@ -32,11 +32,11 @@ impl PlaybookService {
         unimplemented!()
     }
 
-    pub async fn create(_ctx: Arc<Context>, _req: &CreatePlaybookRequest) -> Result<PlaybookResponse> {
+    pub async fn create(_ctx: Arc<Context>, _req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         unimplemented!()
     }
 
-    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _req: &UpdatePlaybookRequest) -> Result<PlaybookResponse> {
+    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _req: &UpdatePlaybookRequest) -> Result<PlaybookSpec> {
         unimplemented!()
     }
 }

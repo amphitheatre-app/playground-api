@@ -30,6 +30,8 @@ use crate::{handlers, requests, responses};
             requests::playbook::CreatePlaybookRequest,
             requests::playbook::UpdatePlaybookRequest,
             responses::playbook::PlaybookResponse,
+            amp_common::resource::PlaybookSpec,
+            amp_common::resource::ActorSpec,
         )
     ),
     tags(
