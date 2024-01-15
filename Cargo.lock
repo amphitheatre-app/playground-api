@@ -62,10 +62,10 @@ checksum = "0942ffc6dcaadf03badf6e6a2d0228460359d5e34b57ccdc720b7382dfbd5ec5"
 
 [[package]]
 name = "amp-client"
-version = "0.6.0"
-source = "git+https://github.com/amphitheatre-app/amp-client-rust?tag=v0.6.0#60110a3de0df44769bb85b34727eed485d4bf934"
+version = "0.7.1"
+source = "git+https://github.com/amphitheatre-app/amp-client-rust?tag=v0.7.1#5f36b79fba0190e1d164a6f33543389a7ce93619"
 dependencies = [
- "amp-common",
+ "amp-common 0.7.1",
  "futures",
  "reqwest-eventsource",
  "serde",
@@ -80,7 +80,35 @@ source = "git+https://github.com/amphitheatre-app/common?tag=v0.6.0#a3b5bdaa520b
 dependencies = [
  "anyhow",
  "chrono",
- "confy",
+ "confy 0.5.1",
+ "convert_case",
+ "data-encoding",
+ "dirs 5.0.1",
+ "json_comments",
+ "k8s-openapi",
+ "kube",
+ "notify",
+ "oci-distribution",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml 0.8.8",
+ "tracing",
+ "ureq",
+ "url",
+ "utoipa",
+ "validator",
+]
+
+[[package]]
+name = "amp-common"
+version = "0.7.1"
+source = "git+https://github.com/amphitheatre-app/common?tag=v0.7.1#75fd87993cebb961bf924a87a7c3180be79fcefd"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "confy 0.6.0",
  "convert_case",
  "data-encoding",
  "dirs 5.0.1",
@@ -439,10 +467,22 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e37668cb35145dcfaa1931a5f37fde375eeae8068b4c0d2f289da28a270b2d2c"
 dependencies = [
- "directories",
+ "directories 4.0.1",
  "serde",
  "thiserror",
  "toml 0.5.11",
+]
+
+[[package]]
+name = "confy"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15d296c475c6ed4093824c28e222420831d27577aaaf0a1163a3b7fc35b248a5"
+dependencies = [
+ "directories 5.0.1",
+ "serde",
+ "thiserror",
+ "toml 0.8.8",
 ]
 
 [[package]]
@@ -587,6 +627,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f51c5d4ddabd36886dd3e1438cb358cdcb0d7c499cb99cb4ac2e38e18b5cb210"
 dependencies = [
  "dirs-sys 0.3.7",
+]
+
+[[package]]
+name = "directories"
+version = "5.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a49173b84e034382284f27f1af4dcbbd231ffa358c0fe316541a7337f376a35"
+dependencies = [
+ "dirs-sys 0.4.1",
 ]
 
 [[package]]
@@ -1789,7 +1838,7 @@ name = "playground-api"
 version = "0.1.3"
 dependencies = [
  "amp-client",
- "amp-common",
+ "amp-common 0.6.0",
  "anyhow",
  "axum",
  "chrono",
