@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::http::HTTPError;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
@@ -26,6 +27,8 @@ pub enum ApiError {
     InternalServerError,
     #[error("Not Found")]
     NotFound,
+    #[error("Not Found Playbook: {0}")]
+    NotFoundPlaybook(HTTPError),
 }
 
 impl IntoResponse for ApiError {
@@ -33,6 +36,7 @@ impl IntoResponse for ApiError {
         let (status, message) = match self {
             Self::InternalServerError => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
             Self::NotFound => (StatusCode::NOT_FOUND, self.to_string()),
+            Self::NotFoundPlaybook(e) => (StatusCode::NOT_FOUND, e.to_string()),
         };
         error!("{} - {}", status, message);
         (status, Json(json!({ "message": message }))).into_response()

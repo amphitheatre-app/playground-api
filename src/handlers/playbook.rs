@@ -14,7 +14,7 @@
 
 use std::sync::Arc;
 
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
@@ -22,7 +22,7 @@ use uuid::Uuid;
 
 use super::Result;
 use crate::context::Context;
-use crate::requests::playbook::{CreatePlaybookRequest, UpdatePlaybookRequest};
+use crate::requests::playbook::{CreatePlaybookRequest, GetPlaybookRequest, UpdatePlaybookRequest};
 use crate::services::playbook::PlaybookService;
 
 // The Playbooks Service Handlers.
@@ -49,24 +49,49 @@ pub async fn create(
 
 /// Returns a playbook detail.
 #[utoipa::path(
-    get, path = "/v1/playbooks/{id}",
+    get, path = "/v1/playbooks/{id}/files/{reference}/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
+        ("reference" = String, description = "The name of the commit/branch/tag. Default: the repository’s default branch."),
+        ("path" = String, description = "path parameter"),
     ),
     responses(
-        (status = 200, description = "Playbook found successfully", body = PlaybookResponse),
+        (status = 200, description = "Playbook found successfully", body = Content),
         (status = 404, description = "Playbook not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Playbooks"
 )]
-pub async fn detail(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::get(ctx, id).await?))
+pub async fn detail(
+    Path(params): Path<GetPlaybookRequest>,
+    State(ctx): State<Arc<Context>>,
+) -> Result<impl IntoResponse> {
+    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path).await?))
 }
-
+#[utoipa::path(
+get, path = "/v1/playbooks/:id/files/trees/:reference/:path?recursive=true | false",
+    params(
+        ("id" = Uuid, description = "The id of playbook"),
+        ("reference" = String, description = "The name of the commit/branch/tag. Default: the repository’s default branch."),
+        ("path" = String, description = "path parameter"),
+    ),
+    responses(
+        (status = 200, description = "Playbook found successfully", body = Tree),
+        (status = 404, description = "Playbook not found"),
+        (status = 500, description = "Internal Server Error"),
+    ),
+    tag = "Playbooks"
+)]
+pub async fn trees(
+    Path(params): Path<GetPlaybookRequest>,
+    Query(recursive): Query<Option<bool>>,
+    State(ctx): State<Arc<Context>>,
+) -> Result<impl IntoResponse> {
+    Ok(Json(PlaybookService::trees(ctx, params.id, params.reference, recursive).await?))
+}
 /// Update a playbook.
 #[utoipa::path(
-    patch, path = "/v1/playbooks/{id}",
+    put, path = "/v1/playbooks/{id}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
     ),
@@ -76,7 +101,7 @@ pub async fn detail(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
         content_type = "application/json"
     ),
     responses(
-        (status = 200, description = "Playbook updated successfully", body = PlaybookResponse),
+        (status = 204, description = "Playbook updated successfully", body = PlaybookResponse),
         (status = 404, description = "Playbook not found")
     ),
     tag = "Playbooks"
@@ -104,5 +129,21 @@ pub async fn update(
 pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
     PlaybookService::delete(ctx, id).await?;
 
+    Ok(StatusCode::NO_CONTENT)
+}
+/// start a playbook
+#[utoipa::path(
+    post, path = "/v1/playbooks/{id}/actions/start",
+    params(
+        ("id" = Uuid, description = "The id of playbook"),
+    ),
+    responses(
+        (status = 204, description = "Playbook deleted successfully"),
+        (status = 404, description = "Playbook not found")
+    ),
+    tag = "Playbooks"
+)]
+pub async fn start(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
+    PlaybookService::start(ctx, id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
