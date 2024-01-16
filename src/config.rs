@@ -35,4 +35,7 @@ pub struct Config {
     /// The Amphitheatre Server.
     #[clap(long, env = "AMP_SERVER")]
     pub amp_server: String,
+
+    #[clap(long, env = "AUTH_TOKEN")]
+    pub auth_token: Option<String>,
 }

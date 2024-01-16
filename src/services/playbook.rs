@@ -12,31 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_client::playbooks::PlaybookPayload;
+use amp_common::resource::PlaybookSpec;
+use amp_common::scm::content::Content;
+use amp_common::scm::git::Tree;
 use std::sync::Arc;
 
 use uuid::Uuid;
 
 use crate::context::Context;
+use crate::errors::ApiError;
 use crate::requests::playbook::{CreatePlaybookRequest, UpdatePlaybookRequest};
-use crate::responses::playbook::PlaybookResponse;
 use crate::services::Result;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
-    pub async fn get(_ctx: Arc<Context>, _id: Uuid) -> Result<PlaybookResponse> {
+    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, path: String) -> Result<Content> {
+        let result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook);
+        let spec = result.unwrap_or_default();
+        let repo = spec.preface.repository.unwrap_or_default().repo;
+        let content = ctx.github_client.contents().find(repo.as_str(), path.as_str(), reference.as_str()).ok();
+        Ok(content.unwrap())
+    }
+
+    pub async fn trees(ctx: Arc<Context>, id: Uuid, reference: String, recursive: Option<bool>) -> Result<Tree> {
+        let result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook);
+        let spec = result.unwrap_or_default();
+        let repo = spec.preface.repository.unwrap_or_default().repo;
+        let tree =
+            ctx.github_client.git().git_trees(repo.as_str(), reference.as_str(), recursive).ok().unwrap_or_default();
+        Ok(tree.unwrap_or_default())
+    }
+
+    pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
+        ctx.client.playbooks().delete(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
+    }
+
+    pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
+        let playbook_payload = PlaybookPayload {
+            title: req.title.clone(),
+            description: req.description.clone().unwrap_or_default(),
+            preface: req.preface.clone(),
+        };
+        ctx.client.playbooks().create(playbook_payload).map_err(ApiError::NotFoundPlaybook)
+    }
+
+    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _req: &UpdatePlaybookRequest) -> Result<PlaybookSpec> {
         unimplemented!()
     }
 
-    pub async fn delete(_ctx: Arc<Context>, _id: Uuid) -> Result<()> {
-        unimplemented!()
-    }
-
-    pub async fn create(_ctx: Arc<Context>, _req: &CreatePlaybookRequest) -> Result<PlaybookResponse> {
-        unimplemented!()
-    }
-
-    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _req: &UpdatePlaybookRequest) -> Result<PlaybookResponse> {
-        unimplemented!()
+    pub async fn start(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
+        ctx.client.playbooks().start(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
     }
 }
