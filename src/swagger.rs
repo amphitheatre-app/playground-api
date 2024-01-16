@@ -26,6 +26,7 @@ use crate::{handlers, requests, responses};
         handlers::playbook::delete,
         handlers::playbook::trees,
         handlers::playbook::start,
+        handlers::playbook::logs,
     ),
     components(
         schemas(
@@ -53,6 +54,8 @@ use crate::{handlers, requests, responses};
             amp_common::scm::content::Content,
             amp_common::scm::git::Tree,
             amp_common::scm::git::TreeEntry,
+
+            amp_common::sync::Synchronization,
         )
     ),
     tags(

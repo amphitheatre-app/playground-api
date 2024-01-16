@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::sync::Synchronization;
 use std::sync::Arc;
 
 use axum::extract::{Path, Query, State};
@@ -22,7 +23,7 @@ use uuid::Uuid;
 
 use super::Result;
 use crate::context::Context;
-use crate::requests::playbook::{CreatePlaybookRequest, GetPlaybookRequest, UpdatePlaybookRequest};
+use crate::requests::playbook::{CreatePlaybookRequest, GetPlaybookRequest};
 use crate::services::playbook::PlaybookService;
 
 // The Playbooks Service Handlers.
@@ -68,6 +69,8 @@ pub async fn detail(
 ) -> Result<impl IntoResponse> {
     Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path).await?))
 }
+
+/// Get file tree
 #[utoipa::path(
 get, path = "/v1/playbooks/:id/files/trees/:reference/:path?recursive=true | false",
     params(
@@ -96,7 +99,7 @@ pub async fn trees(
         ("id" = Uuid, description = "The id of playbook"),
     ),
     request_body(
-        content = inline(UpdatePlaybookRequest),
+        content = inline(Synchronization),
         description = "Update playbook request",
         content_type = "application/json"
     ),
@@ -109,9 +112,10 @@ pub async fn trees(
 pub async fn update(
     Path(id): Path<Uuid>,
     State(ctx): State<Arc<Context>>,
-    Json(req): Json<UpdatePlaybookRequest>,
+    Json(req): Json<Synchronization>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::update(ctx, id, &req).await?))
+    PlaybookService::update(ctx, id, req).await?;
+    Ok(StatusCode::NO_CONTENT)
 }
 
 /// Delete a playbook
@@ -146,4 +150,22 @@ pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
 pub async fn start(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
     PlaybookService::start(ctx, id).await?;
     Ok(StatusCode::NO_CONTENT)
+}
+
+/// get a playbook logs
+
+#[utoipa::path(
+    get, path = "/v1/playbooks/{id}/logs",
+    params(
+        ("id" = Uuid, description = "The id of playbook"),
+    ),
+    responses(
+        (status = 200, description = "Playbook logs found successfully"),
+        (status = 404, description = "Playbook not found")
+    ),
+    tag = "Playbooks"
+)]
+pub async fn logs(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
+    PlaybookService::logs(ctx, id).await;
+    Ok(StatusCode::OK)
 }
