@@ -14,7 +14,7 @@
 
 use std::sync::Arc;
 
-use axum::routing::{delete, get, patch, post};
+use axum::routing::{delete, get, post, put};
 use axum::Router;
 
 use crate::context::Context;
@@ -25,8 +25,7 @@ pub fn build() -> Router<Arc<Context>> {
         // playbooks
         .route("/v1/playbooks", post(handlers::playbook::create))
         .route("/v1/playbooks/:id/files/:reference/:path", get(handlers::playbook::detail))
-        .route("/v1/playbooks/:id", patch(handlers::playbook::update))
+        .route("/v1/playbooks/:id", put(handlers::playbook::update))
         .route("/v1/playbooks/:id", delete(handlers::playbook::delete))
-        .route("/v1/playbooks/:id/files/trees/:reference/:path", get(handlers::playbook::trees))
         .route("/v1/playbooks/:id/actions/start", get(handlers::playbook::start))
 }
