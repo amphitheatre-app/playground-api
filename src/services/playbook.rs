@@ -25,37 +25,49 @@ use uuid::Uuid;
 use crate::context::Context;
 use crate::errors::ApiError;
 use crate::requests::playbook::CreatePlaybookRequest;
+use crate::responses::playbook::FilesResponse;
 use crate::services::Result;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
-    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, path: String) -> Result<Content> {
-        let result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook);
-        let spec = result.unwrap_or_default();
-        let repo = spec.preface.repository.unwrap_or_default().repo;
-        let content = ctx.github_client.contents().find(repo.as_str(), path.as_str(), reference.as_str()).ok();
-        Ok(content.unwrap())
-    }
-
-    pub async fn trees(ctx: Arc<Context>, id: Uuid, reference: String, recursive: Option<bool>) -> Result<Tree> {
+    pub async fn get(
+        ctx: Arc<Context>,
+        id: Uuid,
+        reference: String,
+        path: Option<String>,
+        recursive: bool,
+    ) -> Result<FilesResponse> {
+        let mut files_response = FilesResponse { content: empty_content(), tree: Tree::default() };
         let playbook_result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook).ok();
-        return match playbook_result {
+        match playbook_result {
             Some(playbook) => {
                 let repo = playbook.preface.repository.unwrap_or_default().repo;
-                let tree = ctx
-                    .github_client
-                    .git()
-                    .git_trees(repo.as_str(), reference.as_str(), recursive)
-                    .ok()
-                    .unwrap_or_default();
-                Ok(tree.unwrap_or_default())
+                match path.is_some() {
+                    true => {
+                        let content = ctx
+                            .github_client
+                            .contents()
+                            .find(repo.as_str(), path.unwrap().as_str(), reference.as_str())
+                            .ok();
+                        files_response.content = content.unwrap_or(empty_content());
+                    }
+                    false => {
+                        let tree = ctx
+                            .github_client
+                            .git()
+                            .git_trees(repo.as_str(), reference.as_str(), Option::from(recursive))
+                            .ok()
+                            .unwrap_or_default();
+                        files_response.tree = tree.unwrap_or_default();
+                    }
+                }
             }
             None => {
                 info!("Not found playbooks in {}...", id);
-                Ok(Tree::default())
             }
-        };
+        }
+        Ok(files_response)
     }
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
@@ -96,4 +108,8 @@ impl PlaybookService {
     pub async fn logs(_ctx: Arc<Context>, _id: Uuid) {
         unreachable!()
     }
+}
+
+fn empty_content() -> Content {
+    Content { path: String::new(), data: Vec::new(), sha: String::new(), blob_id: String::new() }
 }

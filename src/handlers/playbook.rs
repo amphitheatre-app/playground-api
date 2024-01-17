@@ -57,7 +57,7 @@ pub async fn create(
         ("path" = String, description = "path parameter"),
     ),
     responses(
-        (status = 200, description = "Playbook found successfully", body = Content),
+        (status = 200, description = "Playbook found successfully", body = FilesResponse),
         (status = 404, description = "Playbook not found"),
         (status = 500, description = "Internal Server Error"),
     ),
@@ -65,32 +65,10 @@ pub async fn create(
 )]
 pub async fn detail(
     Path(params): Path<GetPlaybookRequest>,
+    Query(recursive): Query<bool>,
     State(ctx): State<Arc<Context>>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path).await?))
-}
-
-/// Get file tree
-#[utoipa::path(
-get, path = "/v1/playbooks/:id/files/trees/:reference/:path?recursive=true | false",
-    params(
-        ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: the repository’s default branch."),
-        ("path" = String, description = "path parameter"),
-    ),
-    responses(
-        (status = 200, description = "Playbook found successfully", body = Tree),
-        (status = 404, description = "Playbook not found"),
-        (status = 500, description = "Internal Server Error"),
-    ),
-    tag = "Playbooks"
-)]
-pub async fn trees(
-    Path(params): Path<GetPlaybookRequest>,
-    Query(recursive): Query<Option<bool>>,
-    State(ctx): State<Arc<Context>>,
-) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::trees(ctx, params.id, params.reference, recursive).await?))
+    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path, recursive).await?))
 }
 /// Update a playbook.
 #[utoipa::path(

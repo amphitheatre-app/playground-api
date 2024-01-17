@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::scm::content::Content;
+use amp_common::scm::git::Tree;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -28,4 +30,12 @@ pub struct PlaybookResponse {
     pub created_at: DateTime<Utc>,
     /// When the playbook was last updated in Amphitheatre.
     pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct FilesResponse {
+    /// The file details.
+    pub content: Content,
+    /// The files tree.
+    pub tree: Tree,
 }

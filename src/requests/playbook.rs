@@ -34,5 +34,5 @@ pub struct UpdatePlaybookRequest {
 pub struct GetPlaybookRequest {
     pub id: Uuid,
     pub reference: String,
-    pub path: String,
+    pub path: Option<String>,
 }

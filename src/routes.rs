@@ -27,6 +27,5 @@ pub fn build() -> Router<Arc<Context>> {
         .route("/v1/playbooks/:id/files/:reference/:path", get(handlers::playbook::detail))
         .route("/v1/playbooks/:id", put(handlers::playbook::update))
         .route("/v1/playbooks/:id", delete(handlers::playbook::delete))
-        .route("/v1/playbooks/:id/files/trees/:reference/:path", get(handlers::playbook::trees))
         .route("/v1/playbooks/:id/actions/start", get(handlers::playbook::start))
 }

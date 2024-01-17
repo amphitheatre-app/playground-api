@@ -24,7 +24,6 @@ use crate::{handlers, requests, responses};
         handlers::playbook::detail,
         handlers::playbook::update,
         handlers::playbook::delete,
-        handlers::playbook::trees,
         handlers::playbook::start,
         handlers::playbook::logs,
     ),
