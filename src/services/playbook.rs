@@ -18,7 +18,8 @@ use amp_common::scm::content::Content;
 use amp_common::scm::git::Tree;
 use amp_common::sync::Synchronization;
 use std::sync::Arc;
-use tracing::info;
+use tracing::{info};
+use url::Url;
 
 use uuid::Uuid;
 
@@ -42,24 +43,24 @@ impl PlaybookService {
         let playbook_result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook).ok();
         match playbook_result {
             Some(playbook) => {
-                let repo = playbook.preface.repository.unwrap_or_default().repo;
-                match path.is_some() {
-                    true => {
-                        let content = ctx
-                            .github_client
-                            .contents()
-                            .find(repo.as_str(), path.unwrap().as_str(), reference.as_str())
-                            .ok();
-                        files_response.content = content.unwrap_or(empty_content());
-                    }
-                    false => {
-                        let tree = ctx
-                            .github_client
-                            .git()
-                            .git_trees(repo.as_str(), reference.as_str(), Option::from(recursive))
-                            .ok()
-                            .unwrap_or_default();
-                        files_response.tree = tree.unwrap_or_default();
+                let repository = playbook.preface.manifest.unwrap_or_default().meta.repository;
+                if let Ok(url) = Url::parse(repository.as_str()) {
+                    let repo = &url.path()[1..];
+                    match path.is_some() {
+                        true => {
+                            let content =
+                                ctx.github_client.contents().find(repo, path.unwrap().as_str(), reference.as_str()).ok();
+                            files_response.content = content.unwrap_or(empty_content());
+                        }
+                        false => {
+                            let tree = ctx
+                                .github_client
+                                .git()
+                                .git_trees(repo, reference.as_str(), Option::from(recursive))
+                                .ok()
+                                .unwrap_or_default();
+                            files_response.tree = tree.unwrap_or_default();
+                        }
                     }
                 }
             }

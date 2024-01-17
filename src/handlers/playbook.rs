@@ -15,7 +15,7 @@
 use amp_common::sync::Synchronization;
 use std::sync::Arc;
 
-use axum::extract::{Path, Query, State};
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
@@ -65,10 +65,9 @@ pub async fn create(
 )]
 pub async fn detail(
     Path(params): Path<GetPlaybookRequest>,
-    Query(recursive): Query<bool>,
     State(ctx): State<Arc<Context>>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path, recursive).await?))
+    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path, true).await?))
 }
 /// Update a playbook.
 #[utoipa::path(
