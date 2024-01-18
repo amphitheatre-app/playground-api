@@ -120,8 +120,17 @@ impl PlaybookService {
     }
 
     pub async fn start(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
-        info!("Start playbooks in {}...", id);
-        ctx.client.playbooks().start(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
+        let playbooks = ctx.client.playbooks();
+        match playbooks.get(&id.to_string()) {
+            Ok(_) => {
+                info!("Start playbooks in {}...", id);
+                playbooks.start(&id.to_string()).map_err(ApiError::FailedToStartPlaybook)
+            }
+            Err(e) => {
+                error!("Not found playbooks in {}, error: {}", id, e.to_string());
+                Err(ApiError::NotFoundPlaybook(e))
+            }
+        }
     }
 
     pub async fn logs(_ctx: Arc<Context>, _id: Uuid) {
