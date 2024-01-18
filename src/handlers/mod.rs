@@ -13,5 +13,6 @@
 // limitations under the License.
 
 pub mod file;
+pub mod folder;
 pub mod logger;
 pub mod playbook;

@@ -15,6 +15,9 @@
 mod file;
 pub use file::FileService;
 
+mod folder;
+pub use folder::FolderService;
+
 mod logger;
 pub use logger::LoggerService;
 

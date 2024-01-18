@@ -18,7 +18,7 @@ use axum::routing::{delete, get, post, put};
 use axum::Router;
 
 use crate::context::Context;
-use crate::handlers::{file, logger, playbook};
+use crate::handlers::{file, folder, logger, playbook};
 
 pub fn build() -> Router<Arc<Context>> {
     Router::new()
@@ -37,4 +37,11 @@ pub fn build() -> Router<Arc<Context>> {
         .route("/v1/playbooks/:id/files/:reference/:path", delete(file::delete))
         .route("/v1/playbooks/:id/files/:reference/:path/actions/copy", post(file::copy))
         .route("/v1/playbooks/:id/files/:reference/:path/actions/move", post(file::rename))
+        //
+        // folders
+        .route("/v1/playbooks/:id/folders/:reference/:path", get(folder::get))
+        .route("/v1/playbooks/:id/folders/:reference/:path", post(folder::create))
+        .route("/v1/playbooks/:id/folders/:reference/:path", delete(folder::delete))
+        .route("/v1/playbooks/:id/folders/:reference/:path/actions/copy", post(folder::copy))
+        .route("/v1/playbooks/:id/folders/:reference/:path/actions/move", post(folder::rename))
 }

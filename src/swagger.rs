@@ -32,6 +32,12 @@ use crate::{handlers, requests};
         handlers::file::delete,
         handlers::file::copy,
         handlers::file::rename,
+
+        handlers::folder::get,
+        handlers::folder::create,
+        handlers::folder::delete,
+        handlers::folder::copy,
+        handlers::folder::rename,
     ),
     components(
         schemas(
