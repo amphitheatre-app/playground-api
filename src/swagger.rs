@@ -59,7 +59,7 @@ use crate::{handlers, requests};
     ),
     tags(
         (name = "Playbooks", description = "The Playbooks Service Handlers"),
-        (name = "Logger", description = "The Logger Service Handlers"),
+        (name = "Logging", description = "The Logging Service Handlers"),
     ),
 )]
 struct ApiDoc;

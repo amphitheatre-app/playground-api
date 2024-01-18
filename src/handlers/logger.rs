@@ -35,7 +35,7 @@ use crate::services::logger::LoggerService;
         (status = 200, description = "Playbook logs found successfully"),
         (status = 404, description = "Playbook not found")
     ),
-    tag = "Logger"
+    tag = "Logging"
 )]
 pub async fn logs(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
     LoggerService::logs(ctx, id).await;
