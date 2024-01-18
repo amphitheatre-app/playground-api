@@ -113,6 +113,7 @@ pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
 
     Ok(StatusCode::NO_CONTENT)
 }
+
 /// start a playbook
 #[utoipa::path(
     post, path = "/v1/playbooks/{id}/actions/start",
@@ -120,8 +121,9 @@ pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
         ("id" = Uuid, description = "The id of playbook"),
     ),
     responses(
-        (status = 204, description = "Playbook deleted successfully"),
-        (status = 404, description = "Playbook not found")
+        (status = 204, description = "Playbook start successfully"),
+        (status = 404, description = "Playbook not found"),
+        (status = 500, description = "Failed to start playbook")
     ),
     tag = "Playbooks"
 )]

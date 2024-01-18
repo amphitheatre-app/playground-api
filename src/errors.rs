@@ -37,6 +37,9 @@ pub enum ApiError {
 
     #[error("Failed to delete playbook: {0}")]
     FailedToDeletePlaybook(HTTPError),
+
+    #[error("Failed to start playbook: {0}")]
+    FailedToStartPlaybook(HTTPError),
 }
 
 impl IntoResponse for ApiError {
@@ -47,6 +50,7 @@ impl IntoResponse for ApiError {
             Self::NotFoundPlaybook(e) => (StatusCode::NOT_FOUND, e.to_string()),
             Self::FailedToCreatePlaybook(e) => (StatusCode::BAD_REQUEST, e.to_string()),
             Self::FailedToDeletePlaybook(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            Self::FailedToStartPlaybook(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
         };
 
         error!("{} - {}", status, message);
