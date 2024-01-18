@@ -18,13 +18,20 @@ use uuid::Uuid;
 use amp_common::scm::content::Content;
 
 use crate::context::Context;
-use crate::errors::Result;
+use crate::errors::{ApiError, Result};
+use crate::utils;
 
 pub struct FileService;
 
 impl FileService {
-    pub async fn get(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<Content> {
-        todo!()
+    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, path: String) -> Result<Content> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+        let source = playbook.preface.repository.unwrap();
+
+        ctx.github_client
+            .contents()
+            .find(&utils::repo(&source.repo)?, &path, &reference)
+            .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
     pub async fn create(

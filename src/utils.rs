@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod app;
-pub mod config;
-pub mod context;
-pub mod errors;
-pub mod handlers;
-pub mod requests;
-pub mod responses;
-pub mod routes;
-pub mod services;
-pub mod swagger;
-pub mod utils;
+use url::Url;
+
+use crate::errors::{ApiError, Result};
+
+/// Resolve the repo from the URL.
+pub fn repo(url: &str) -> Result<String> {
+    let url = Url::parse(url).map_err(ApiError::InvalidRepoAddress)?;
+    let mut repo = url.path().replace(".git", "");
+    repo = repo.trim_start_matches('/').to_string();
+
+    Ok(repo)
+}

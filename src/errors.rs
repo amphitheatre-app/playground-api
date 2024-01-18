@@ -16,14 +16,13 @@ use amp_common::http::HTTPError;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
-use serde::{Deserialize, Serialize};
 use serde_json::json;
 use thiserror::Error;
 use tracing::error;
 
 pub type Result<T, E = ApiError> = std::result::Result<T, E>;
 
-#[derive(Serialize, Deserialize, Debug, Error)]
+#[derive(Debug, Error)]
 pub enum ApiError {
     #[error("Internal Server Error")]
     InternalServerError,
@@ -42,6 +41,12 @@ pub enum ApiError {
 
     #[error("Failed to start playbook: {0}")]
     FailedToStartPlaybook(HTTPError),
+
+    #[error("Not Found Content: {0}")]
+    NotFoundContent(String),
+
+    #[error("InvalidRepoAddress: {0}")]
+    InvalidRepoAddress(#[source] url::ParseError),
 }
 
 impl IntoResponse for ApiError {
@@ -53,6 +58,8 @@ impl IntoResponse for ApiError {
             Self::FailedToCreatePlaybook(e) => (StatusCode::BAD_REQUEST, e.to_string()),
             Self::FailedToDeletePlaybook(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
             Self::FailedToStartPlaybook(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            Self::NotFoundContent(e) => (StatusCode::NOT_FOUND, e.to_string()),
+            Self::InvalidRepoAddress(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
         };
 
         error!("{} - {}", status, message);
