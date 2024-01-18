@@ -103,7 +103,8 @@ pub async fn update(
     ),
     responses(
         (status = 204, description = "Playbook deleted successfully"),
-        (status = 404, description = "Playbook not found")
+        (status = 404, description = "Playbook not found"),
+        (status = 500, description = "Failed to delete playbook")
     ),
     tag = "Playbooks"
 )]

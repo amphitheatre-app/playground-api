@@ -18,7 +18,7 @@ use amp_common::scm::content::Content;
 use amp_common::scm::git::Tree;
 use amp_common::sync::Synchronization;
 use std::sync::Arc;
-use tracing::info;
+use tracing::{error, info};
 use url::Url;
 
 use uuid::Uuid;
@@ -75,8 +75,17 @@ impl PlaybookService {
     }
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
-        info!("delete playbooks in {}...", id);
-        ctx.client.playbooks().delete(&id.to_string()).map_err(ApiError::NotFoundPlaybook)
+        let playbooks = ctx.client.playbooks();
+        match playbooks.get(&id.to_string()) {
+            Ok(_) => {
+                info!("delete playbooks in {}...", id);
+                playbooks.delete(&id.to_string()).map_err(ApiError::FailedToDeletePlaybook)
+            }
+            Err(e) => {
+                error!("Not found playbooks in {}, error: {}", id, e.to_string());
+                Err(ApiError::NotFoundPlaybook(e))
+            }
+        }
     }
 
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
