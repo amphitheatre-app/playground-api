@@ -14,12 +14,9 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::PlaybookSpec;
-use amp_common::scm::content::Content;
-use amp_common::scm::git::Tree;
 use amp_common::sync::Synchronization;
 use std::sync::Arc;
 use tracing::{error, info};
-use url::Url;
 
 use uuid::Uuid;
 
@@ -27,51 +24,17 @@ use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;
-use crate::responses::playbook::FilesResponse;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
-    pub async fn get(
-        ctx: Arc<Context>,
-        id: Uuid,
-        reference: String,
-        path: Option<String>,
-        recursive: bool,
-    ) -> Result<FilesResponse> {
-        let mut files_response = FilesResponse { content: empty_content(), tree: Tree::default() };
-        let playbook_result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook).ok();
-        match playbook_result {
-            Some(playbook) => {
-                let repository = playbook.preface.manifest.unwrap_or_default().meta.repository;
-                if let Ok(url) = Url::parse(repository.as_str()) {
-                    let repo = &url.path()[1..];
-                    match path.is_some() {
-                        true => {
-                            let content = ctx
-                                .github_client
-                                .contents()
-                                .find(repo, path.unwrap().as_str(), reference.as_str())
-                                .ok();
-                            files_response.content = content.unwrap_or(empty_content());
-                        }
-                        false => {
-                            let tree = ctx
-                                .github_client
-                                .git()
-                                .git_trees(repo, reference.as_str(), Option::from(recursive))
-                                .ok()
-                                .unwrap_or_default();
-                            files_response.tree = tree.unwrap_or_default();
-                        }
-                    }
-                }
-            }
-            None => {
-                info!("Not found playbooks in {}...", id);
-            }
-        }
-        Ok(files_response)
+    pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
+        let payload = PlaybookPayload {
+            title: req.title.clone(),
+            description: req.description.clone().unwrap_or_default(),
+            preface: req.preface.clone(),
+        };
+        ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
@@ -86,15 +49,6 @@ impl PlaybookService {
                 Err(ApiError::NotFoundPlaybook(e))
             }
         }
-    }
-
-    pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
-        let payload = PlaybookPayload {
-            title: req.title.clone(),
-            description: req.description.clone().unwrap_or_default(),
-            preface: req.preface.clone(),
-        };
-        ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
     pub async fn update(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {
@@ -126,8 +80,4 @@ impl PlaybookService {
             }
         }
     }
-}
-
-fn empty_content() -> Content {
-    Content { path: String::new(), data: Vec::new(), sha: String::new(), blob_id: String::new() }
 }

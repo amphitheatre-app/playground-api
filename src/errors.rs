@@ -47,6 +47,9 @@ pub enum ApiError {
 
     #[error("InvalidRepoAddress: {0}")]
     InvalidRepoAddress(#[source] url::ParseError),
+
+    #[error("Not Found Folder: {0}")]
+    NotFoundFolder(String),
 }
 
 impl IntoResponse for ApiError {
@@ -60,6 +63,7 @@ impl IntoResponse for ApiError {
             Self::FailedToStartPlaybook(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
             Self::NotFoundContent(e) => (StatusCode::NOT_FOUND, e.to_string()),
             Self::InvalidRepoAddress(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            Self::NotFoundFolder(e) => (StatusCode::NOT_FOUND, e.to_string()),
         };
 
         error!("{} - {}", status, message);

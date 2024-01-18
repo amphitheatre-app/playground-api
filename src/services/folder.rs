@@ -12,19 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::scm::git::Tree;
 use std::sync::Arc;
 use uuid::Uuid;
 
 use amp_common::scm::content::Content;
 
 use crate::context::Context;
-use crate::errors::Result;
+use crate::errors::{ApiError, Result};
+use crate::utils;
 
 pub struct FolderService;
 
 impl FolderService {
-    pub async fn get(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<Content> {
-        todo!()
+    // @FIXME: pass path to get_trees() method.
+    // @TODO: add recursive option argument to current method.
+    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, _path: String) -> Result<Tree> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+        let source = playbook.preface.repository.unwrap();
+
+        ctx.github_client
+            .git()
+            .git_trees(&utils::repo(&source.repo)?, &reference, Some(true))
+            .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
+            .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }
 
     pub async fn create(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<Content> {
