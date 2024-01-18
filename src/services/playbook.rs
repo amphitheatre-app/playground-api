@@ -80,12 +80,12 @@ impl PlaybookService {
     }
 
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
-        let playbook_payload = PlaybookPayload {
+        let payload = PlaybookPayload {
             title: req.title.clone(),
             description: req.description.clone().unwrap_or_default(),
             preface: req.preface.clone(),
         };
-        ctx.client.playbooks().create(playbook_payload).map_err(ApiError::NotFoundPlaybook)
+        ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
     pub async fn update(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {

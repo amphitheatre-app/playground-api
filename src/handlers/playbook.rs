@@ -37,7 +37,7 @@ use crate::services::playbook::PlaybookService;
         content_type = "application/json"
     ),
     responses(
-        (status = 201, description = "Playbook created successfully", body = PlaybookResponse)
+        (status = 201, description = "Playbook created successfully", body = PlaybookSpec)
     ),
     tag = "Playbooks"
 )]

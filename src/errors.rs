@@ -25,10 +25,15 @@ use tracing::error;
 pub enum ApiError {
     #[error("Internal Server Error")]
     InternalServerError,
+
     #[error("Not Found")]
     NotFound,
+
     #[error("Not Found Playbook: {0}")]
     NotFoundPlaybook(HTTPError),
+
+    #[error("Failed to create playbook: {0}")]
+    FailedToCreatePlaybook(HTTPError),
 }
 
 impl IntoResponse for ApiError {
@@ -37,7 +42,9 @@ impl IntoResponse for ApiError {
             Self::InternalServerError => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
             Self::NotFound => (StatusCode::NOT_FOUND, self.to_string()),
             Self::NotFoundPlaybook(e) => (StatusCode::NOT_FOUND, e.to_string()),
+            Self::FailedToCreatePlaybook(e) => (StatusCode::BAD_REQUEST, e.to_string()),
         };
+
         error!("{} - {}", status, message);
         (status, Json(json!({ "message": message }))).into_response()
     }

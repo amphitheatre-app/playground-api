@@ -14,23 +14,8 @@
 
 use amp_common::scm::content::Content;
 use amp_common::scm::git::Tree;
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-
-#[derive(Serialize, Deserialize, ToSchema)]
-pub struct PlaybookResponse {
-    /// The playbook ID in Amphitheatre.
-    pub id: String,
-    /// The title of the playbook.
-    pub title: String,
-    /// The description of the playbook.
-    pub description: String,
-    /// When the playbook was created in Amphitheatre.
-    pub created_at: DateTime<Utc>,
-    /// When the playbook was last updated in Amphitheatre.
-    pub updated_at: DateTime<Utc>,
-}
 
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct FilesResponse {
