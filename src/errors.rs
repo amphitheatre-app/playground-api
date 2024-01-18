@@ -50,6 +50,12 @@ pub enum ApiError {
 
     #[error("Not Found Folder: {0}")]
     NotFoundFolder(String),
+
+    #[error("Failed to synchronize: {0}")]
+    FailedToSynchronize(HTTPError),
+
+    #[error("Bad Playbook: {0}")]
+    BadPlaybook(String),
 }
 
 impl IntoResponse for ApiError {
@@ -64,6 +70,8 @@ impl IntoResponse for ApiError {
             Self::NotFoundContent(e) => (StatusCode::NOT_FOUND, e.to_string()),
             Self::InvalidRepoAddress(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
             Self::NotFoundFolder(e) => (StatusCode::NOT_FOUND, e.to_string()),
+            Self::FailedToSynchronize(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            Self::BadPlaybook(e) => (StatusCode::BAD_REQUEST, e.to_string()),
         };
 
         error!("{} - {}", status, message);

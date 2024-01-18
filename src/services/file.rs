@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use amp_common::sync::{EventKinds, Path, Synchronization};
 use std::sync::Arc;
+use tracing::debug;
 use uuid::Uuid;
 
 use amp_common::scm::content::Content;
@@ -24,6 +26,7 @@ use crate::utils;
 pub struct FileService;
 
 impl FileService {
+    /// Get a file content from the remote git repository.
     pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, path: String) -> Result<Content> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
@@ -34,16 +37,30 @@ impl FileService {
             .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
+    /// Create a file to the workspace.
     pub async fn create(
-        _ctx: Arc<Context>,
-        _id: Uuid,
+        ctx: Arc<Context>,
+        id: Uuid,
         _reference: String,
-        _path: String,
-        _content: String,
+        path: String,
+        content: String,
     ) -> Result<Content> {
-        todo!()
+        let data = content.into_bytes();
+        let req = Synchronization {
+            kind: EventKinds::Create,
+            paths: vec![Path::File(path.clone())],
+            attributes: None,
+            payload: Some(data.clone()),
+        };
+
+        // Call sync() method to create file.
+        FileService::sync(ctx, id, req)?;
+
+        // We build a content object to return, because it's just a temporary file on the workspace.
+        Ok(Content { path, data, sha: String::new(), blob_id: String::new() })
     }
 
+    /// Update a file to the workspace.
     pub async fn update(
         _ctx: Arc<Context>,
         _id: Uuid,
@@ -51,13 +68,17 @@ impl FileService {
         _path: String,
         _content: String,
     ) -> Result<Content> {
+        // refer to create() method.
         todo!()
     }
 
+    /// Delete a file from the workspace.
     pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<()> {
+        // refer to create() method.
         todo!()
     }
 
+    /// Copy a file to the destination path on the workspace.
     pub async fn copy(
         _ctx: Arc<Context>,
         _id: Uuid,
@@ -65,9 +86,11 @@ impl FileService {
         _path: String,
         _destination: String,
     ) -> Result<Content> {
+        // refer to create() method.
         todo!()
     }
 
+    /// Move a file to the destination path on the workspace.
     pub async fn rename(
         _ctx: Arc<Context>,
         _id: Uuid,
@@ -75,6 +98,21 @@ impl FileService {
         _path: String,
         _destination: String,
     ) -> Result<Content> {
+        // refer to create() method.
         todo!()
+    }
+
+    /// Sync to the workspace.
+    fn sync(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+
+        debug!("update playbooks in {}...", id);
+
+        if let Some(characters) = playbook.characters {
+            let character = characters.first().unwrap();
+            ctx.client.actors().sync(&id.to_string(), &character.meta.name, req).map_err(ApiError::FailedToSynchronize)
+        } else {
+            Err(ApiError::BadPlaybook("The playbook has no characters".to_string()))
+        }
     }
 }

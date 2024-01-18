@@ -14,7 +14,6 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::PlaybookSpec;
-use amp_common::sync::Synchronization;
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -49,22 +48,6 @@ impl PlaybookService {
                 Err(ApiError::NotFoundPlaybook(e))
             }
         }
-    }
-
-    pub async fn update(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {
-        let playbook_result = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook).ok();
-        return match playbook_result {
-            Some(playbook) => {
-                info!("update playbooks in {}...", id);
-                let uuid_str: &str = &id.to_string();
-                let name = playbook.preface.name.as_str();
-                ctx.client.actors().sync(uuid_str, name, req).map_err(ApiError::NotFoundPlaybook)
-            }
-            None => {
-                info!("Not found playbooks in {}...", id);
-                Ok(0)
-            }
-        };
     }
 
     pub async fn start(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
