@@ -12,5 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod logger;
-pub mod playbook;
+use std::sync::Arc;
+use uuid::Uuid;
+
+use crate::context::Context;
+
+pub struct LoggerService;
+
+impl LoggerService {
+    pub async fn logs(_ctx: Arc<Context>, _id: Uuid) {
+        unreachable!()
+    }
+}

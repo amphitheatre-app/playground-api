@@ -21,8 +21,8 @@ use axum::response::IntoResponse;
 use axum::Json;
 use uuid::Uuid;
 
-use super::Result;
 use crate::context::Context;
+use crate::errors::Result;
 use crate::requests::playbook::{CreatePlaybookRequest, GetPlaybookRequest};
 use crate::services::playbook::PlaybookService;
 
@@ -130,22 +130,4 @@ pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
 pub async fn start(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
     PlaybookService::start(ctx, id).await?;
     Ok(StatusCode::NO_CONTENT)
-}
-
-/// get a playbook logs
-
-#[utoipa::path(
-    get, path = "/v1/playbooks/{id}/logs",
-    params(
-        ("id" = Uuid, description = "The id of playbook"),
-    ),
-    responses(
-        (status = 200, description = "Playbook logs found successfully"),
-        (status = 404, description = "Playbook not found")
-    ),
-    tag = "Playbooks"
-)]
-pub async fn logs(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
-    PlaybookService::logs(ctx, id).await;
-    Ok(StatusCode::OK)
 }

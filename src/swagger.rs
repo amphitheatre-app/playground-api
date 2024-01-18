@@ -25,7 +25,8 @@ use crate::{handlers, requests};
         handlers::playbook::update,
         handlers::playbook::delete,
         handlers::playbook::start,
-        handlers::playbook::logs,
+
+        handlers::logger::logs,
     ),
     components(
         schemas(
@@ -58,6 +59,7 @@ use crate::{handlers, requests};
     ),
     tags(
         (name = "Playbooks", description = "The Playbooks Service Handlers"),
+        (name = "Logger", description = "The Logger Service Handlers"),
     ),
 )]
 struct ApiDoc;
