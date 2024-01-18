@@ -26,9 +26,9 @@ use uuid::Uuid;
 
 use crate::context::Context;
 use crate::errors::ApiError;
+use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;
 use crate::responses::playbook::FilesResponse;
-use crate::services::Result;
 
 pub struct PlaybookService;
 
@@ -131,10 +131,6 @@ impl PlaybookService {
                 Err(ApiError::NotFoundPlaybook(e))
             }
         }
-    }
-
-    pub async fn logs(_ctx: Arc<Context>, _id: Uuid) {
-        unreachable!()
     }
 }
 

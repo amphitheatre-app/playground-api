@@ -21,6 +21,8 @@ use serde_json::json;
 use thiserror::Error;
 use tracing::error;
 
+pub type Result<T, E = ApiError> = std::result::Result<T, E>;
+
 #[derive(Serialize, Deserialize, Debug, Error)]
 pub enum ApiError {
     #[error("Internal Server Error")]
