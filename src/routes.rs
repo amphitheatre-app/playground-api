@@ -18,14 +18,23 @@ use axum::routing::{delete, get, post, put};
 use axum::Router;
 
 use crate::context::Context;
-use crate::handlers;
+use crate::handlers::{file, logger, playbook};
 
 pub fn build() -> Router<Arc<Context>> {
     Router::new()
         // playbooks
-        .route("/v1/playbooks", post(handlers::playbook::create))
-        .route("/v1/playbooks/:id/files/:reference/:path", get(handlers::playbook::detail))
-        .route("/v1/playbooks/:id", put(handlers::playbook::update))
-        .route("/v1/playbooks/:id", delete(handlers::playbook::delete))
-        .route("/v1/playbooks/:id/actions/start", get(handlers::playbook::start))
+        .route("/v1/playbooks", post(playbook::create))
+        .route("/v1/playbooks/:id", delete(playbook::delete))
+        .route("/v1/playbooks/:id/actions/start", get(playbook::start))
+        //
+        // logging
+        .route("/v1/playbooks/:id/logs", get(logger::logs))
+        //
+        // files
+        .route("/v1/playbooks/:id/files/:reference/:path", get(file::get))
+        .route("/v1/playbooks/:id/files/:reference/:path", post(file::create))
+        .route("/v1/playbooks/:id/files/:reference/:path", put(file::update))
+        .route("/v1/playbooks/:id/files/:reference/:path", delete(file::delete))
+        .route("/v1/playbooks/:id/files/:reference/:path/actions/copy", post(file::copy))
+        .route("/v1/playbooks/:id/files/:reference/:path/actions/move", post(file::rename))
 }

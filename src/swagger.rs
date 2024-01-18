@@ -21,17 +21,23 @@ use crate::{handlers, requests};
 #[openapi(
     paths(
         handlers::playbook::create,
-        handlers::playbook::detail,
-        handlers::playbook::update,
         handlers::playbook::delete,
         handlers::playbook::start,
 
         handlers::logger::logs,
+
+        handlers::file::get,
+        handlers::file::create,
+        handlers::file::update,
+        handlers::file::delete,
+        handlers::file::copy,
+        handlers::file::rename,
     ),
     components(
         schemas(
             requests::playbook::CreatePlaybookRequest,
-            requests::playbook::UpdatePlaybookRequest,
+            requests::file::FileRequest,
+            requests::file::DestinationRequest,
 
             amp_common::resource::ActorSpec,
             amp_common::resource::CharacterSpec,
@@ -53,8 +59,6 @@ use crate::{handlers, requests};
             amp_common::scm::content::Content,
             amp_common::scm::git::Tree,
             amp_common::scm::git::TreeEntry,
-
-            amp_common::sync::Synchronization,
         )
     ),
     tags(

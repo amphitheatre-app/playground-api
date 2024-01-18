@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use amp_common::sync::Synchronization;
 use std::sync::Arc;
 
 use axum::extract::{Path, State};
@@ -23,8 +22,8 @@ use uuid::Uuid;
 
 use crate::context::Context;
 use crate::errors::Result;
-use crate::requests::playbook::{CreatePlaybookRequest, GetPlaybookRequest};
-use crate::services::playbook::PlaybookService;
+use crate::requests::playbook::CreatePlaybookRequest;
+use crate::services::PlaybookService;
 
 // The Playbooks Service Handlers.
 
@@ -48,53 +47,6 @@ pub async fn create(
     Ok((StatusCode::CREATED, Json(PlaybookService::create(ctx, &req).await?)))
 }
 
-/// Returns a playbook detail.
-#[utoipa::path(
-    get, path = "/v1/playbooks/{id}/files/{reference}/{path}",
-    params(
-        ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: the repository’s default branch."),
-        ("path" = String, description = "path parameter"),
-    ),
-    responses(
-        (status = 200, description = "Playbook found successfully", body = FilesResponse),
-        (status = 404, description = "Playbook not found"),
-        (status = 500, description = "Internal Server Error"),
-    ),
-    tag = "Playbooks"
-)]
-pub async fn detail(
-    Path(params): Path<GetPlaybookRequest>,
-    State(ctx): State<Arc<Context>>,
-) -> Result<impl IntoResponse> {
-    Ok(Json(PlaybookService::get(ctx, params.id, params.reference, params.path, true).await?))
-}
-/// Update a playbook.
-#[utoipa::path(
-    put, path = "/v1/playbooks/{id}",
-    params(
-        ("id" = Uuid, description = "The id of playbook"),
-    ),
-    request_body(
-        content = inline(Synchronization),
-        description = "Update playbook request",
-        content_type = "application/json"
-    ),
-    responses(
-        (status = 204, description = "Playbook updated successfully", body = PlaybookResponse),
-        (status = 404, description = "Playbook not found")
-    ),
-    tag = "Playbooks"
-)]
-pub async fn update(
-    Path(id): Path<Uuid>,
-    State(ctx): State<Arc<Context>>,
-    Json(req): Json<Synchronization>,
-) -> Result<impl IntoResponse> {
-    PlaybookService::update(ctx, id, req).await?;
-    Ok(StatusCode::NO_CONTENT)
-}
-
 /// Delete a playbook
 #[utoipa::path(
     delete, path = "/v1/playbooks/{id}",
@@ -108,7 +60,7 @@ pub async fn update(
     ),
     tag = "Playbooks"
 )]
-pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
+pub async fn delete(State(ctx): State<Arc<Context>>, Path(id): Path<Uuid>) -> Result<impl IntoResponse> {
     PlaybookService::delete(ctx, id).await?;
 
     Ok(StatusCode::NO_CONTENT)
@@ -127,7 +79,8 @@ pub async fn delete(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Re
     ),
     tag = "Playbooks"
 )]
-pub async fn start(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
+pub async fn start(State(ctx): State<Arc<Context>>, Path(id): Path<Uuid>) -> Result<impl IntoResponse> {
     PlaybookService::start(ctx, id).await?;
+
     Ok(StatusCode::NO_CONTENT)
 }

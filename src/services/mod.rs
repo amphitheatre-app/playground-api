@@ -12,5 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod logger;
-pub mod playbook;
+mod file;
+pub use file::FileService;
+
+mod logger;
+pub use logger::LoggerService;
+
+mod playbook;
+pub use playbook::PlaybookService;

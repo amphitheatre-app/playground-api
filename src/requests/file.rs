@@ -12,5 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod file;
-pub mod playbook;
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct FileRequest {
+    pub content: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct DestinationRequest {
+    pub destination: String,
+}

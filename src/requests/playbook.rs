@@ -15,24 +15,10 @@
 use amp_common::resource::Preface;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct CreatePlaybookRequest {
     pub title: String,
     pub description: Option<String>,
     pub preface: Preface,
-}
-
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct UpdatePlaybookRequest {
-    pub title: Option<String>,
-    pub description: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct GetPlaybookRequest {
-    pub id: Uuid,
-    pub reference: String,
-    pub path: Option<String>,
 }
