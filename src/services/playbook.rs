@@ -13,7 +13,8 @@
 // limitations under the License.
 
 use amp_client::playbooks::PlaybookPayload;
-use amp_common::resource::PlaybookSpec;
+use amp_common::resource::{PlaybookSpec, Preface};
+use amp_common::schema::GitReference;
 use amp_common::scm::content::Content;
 use amp_common::scm::git::Tree;
 use amp_common::sync::Synchronization;
@@ -89,10 +90,15 @@ impl PlaybookService {
     }
 
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
+        let mut preface = Preface::default();
+        let mut reference = GitReference::default();
+        preface.name = req.repo.clone();
+        reference.repo = req.repo.clone();
+        preface.repository = Some(reference);
         let payload = PlaybookPayload {
             title: req.title.clone(),
             description: req.description.clone().unwrap_or_default(),
-            preface: req.preface.clone(),
+            preface: preface.clone(),
         };
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
