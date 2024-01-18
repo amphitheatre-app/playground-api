@@ -18,7 +18,7 @@ use amp_common::scm::content::Content;
 use amp_common::scm::git::Tree;
 use amp_common::sync::Synchronization;
 use std::sync::Arc;
-use tracing::{info};
+use tracing::info;
 use url::Url;
 
 use uuid::Uuid;
@@ -48,8 +48,11 @@ impl PlaybookService {
                     let repo = &url.path()[1..];
                     match path.is_some() {
                         true => {
-                            let content =
-                                ctx.github_client.contents().find(repo, path.unwrap().as_str(), reference.as_str()).ok();
+                            let content = ctx
+                                .github_client
+                                .contents()
+                                .find(repo, path.unwrap().as_str(), reference.as_str())
+                                .ok();
                             files_response.content = content.unwrap_or(empty_content());
                         }
                         false => {
