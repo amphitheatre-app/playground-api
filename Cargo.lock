@@ -1809,7 +1809,7 @@ checksum = "2900ede94e305130c13ddd391e0ab7cbaeb783945ae07a279c268cb05109c6cb"
 
 [[package]]
 name = "playground-api"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "amp-client",
  "amp-common",
