@@ -14,8 +14,8 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::{PlaybookSpec, Preface};
-use std::sync::Arc;
 use amp_common::schema::GitReference;
+use std::sync::Arc;
 use tracing::{error, info};
 
 use uuid::Uuid;
@@ -49,14 +49,9 @@ impl PlaybookService {
         reference.repo = req.repo.clone();
         preface.name = req.repo.clone();
         preface.repository = Some(reference);
-        let payload = PlaybookPayload {
-            title,
-            description,
-            preface,
-        };
+        let payload = PlaybookPayload { title, description, preface };
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
-
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
         let playbooks = ctx.client.playbooks();
