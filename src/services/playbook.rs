@@ -44,12 +44,7 @@ impl PlaybookService {
                 info!("Not found github repositories in {}...", repo);
             }
         }
-        let mut preface = Preface::default();
-        let mut reference = GitReference::default();
-        reference.repo = req.repo.clone();
-        preface.name = req.repo.clone();
-        preface.repository = Some(reference);
-        let payload = PlaybookPayload { title, description, preface };
+        let payload = PlaybookPayload { title, description, preface: Preface::repository(&req.repo) };
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
