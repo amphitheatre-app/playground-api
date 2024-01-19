@@ -13,8 +13,9 @@
 // limitations under the License.
 
 use amp_client::playbooks::PlaybookPayload;
-use amp_common::resource::PlaybookSpec;
+use amp_common::resource::{PlaybookSpec, Preface};
 use std::sync::Arc;
+use amp_common::schema::GitReference;
 use tracing::{error, info};
 
 use uuid::Uuid;
@@ -23,18 +24,39 @@ use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;
+use crate::utils::repo;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
+        let mut title = String::new();
+        let mut description = String::new();
+
+        let repo = repo(req.repo.as_str()).unwrap_or_default();
+        let repository = ctx.github_client.repositories().find(repo.as_str()).ok().unwrap_or_default();
+        match repository {
+            Some(repository) => {
+                title = repo;
+                description = repository.description;
+            }
+            None => {
+                info!("Not found github repositories in {}...", repo);
+            }
+        }
+        let mut preface = Preface::default();
+        let mut reference = GitReference::default();
+        reference.repo = req.repo.clone();
+        preface.name = req.repo.clone();
+        preface.repository = Some(reference);
         let payload = PlaybookPayload {
-            title: req.title.clone(),
-            description: req.description.clone().unwrap_or_default(),
-            preface: req.preface.clone(),
+            title,
+            description,
+            preface,
         };
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
+
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
         let playbooks = ctx.client.playbooks();

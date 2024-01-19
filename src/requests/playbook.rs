@@ -18,7 +18,5 @@ use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct CreatePlaybookRequest {
-    pub title: String,
-    pub description: Option<String>,
-    pub preface: Preface,
+    pub repo: String,
 }
