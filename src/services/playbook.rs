@@ -31,8 +31,8 @@ impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         let repo = repo(&req.repo)?;
         let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
-        let description= repository.and_then(|r|r.description).unwrap_or_default();
-        let payload = PlaybookPayload { title:repo, description, preface: Preface::repository(&req.repo) };
+        let description = repository.and_then(|r| Option::from(r.name)).unwrap_or_default();
+        let payload = PlaybookPayload { title: repo, description, preface: Preface::repository(&req.repo) };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
