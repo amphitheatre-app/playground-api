@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use amp_common::resource::Preface;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct CreatePlaybookRequest {
-    pub title: String,
-    pub description: Option<String>,
-    pub preface: Preface,
+    pub repo: String,
 }

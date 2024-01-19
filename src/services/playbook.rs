@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use amp_client::playbooks::PlaybookPayload;
-use amp_common::resource::PlaybookSpec;
+use amp_common::resource::{PlaybookSpec, Preface};
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -23,16 +23,17 @@ use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;
+use crate::utils::repo;
 
 pub struct PlaybookService;
 
 impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
-        let payload = PlaybookPayload {
-            title: req.title.clone(),
-            description: req.description.clone().unwrap_or_default(),
-            preface: req.preface.clone(),
-        };
+        let repo = repo(&req.repo)?;
+        let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
+        let description = repository.and_then(|r| Option::from(r.name)).unwrap_or_default();
+        let payload = PlaybookPayload { title: repo, description, preface: Preface::repository(&req.repo) };
+
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
