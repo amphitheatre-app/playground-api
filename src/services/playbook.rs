@@ -14,7 +14,6 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::{PlaybookSpec, Preface};
-use amp_common::schema::GitReference;
 use std::sync::Arc;
 use tracing::{error, info};
 
