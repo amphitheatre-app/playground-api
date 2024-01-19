@@ -33,7 +33,7 @@ impl PlaybookService {
         let mut title = String::new();
         let mut description = String::new();
 
-        let repo = repo(req.repo.as_str()).unwrap_or_default();
+        let repo = repo(&req.repo).unwrap_or_default();
         let repository = ctx.github_client.repositories().find(repo.as_str()).ok().unwrap_or_default();
         match repository {
             Some(repository) => {
