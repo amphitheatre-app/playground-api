@@ -22,7 +22,7 @@ use uuid::Uuid;
 use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
-use crate::requests::playbook::CreatePlaybookRequest;
+use crate::requests::playbook::{CreatePlaybookRequest, GitReferenceMethods};
 use crate::utils::repo;
 
 pub struct PlaybookService;
@@ -31,8 +31,13 @@ impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         let repo = repo(&req.repo)?;
         let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
-        let description = repository.and_then(|r| Option::from(r.name)).unwrap_or_default();
-        let payload = PlaybookPayload { title: repo, description, preface: Preface::repository(&req.repo) };
+        let description = repository.and_then(|r| r.description).unwrap_or_default();
+        let preface = Preface {
+            name: req.repo.clone(),
+            repository: Some(GitReferenceMethods::new(req.repo.clone(), req.reference.clone())),
+            ..Preface::default()
+        };
+        let payload = PlaybookPayload { title: repo, description, preface };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
