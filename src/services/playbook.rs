@@ -29,21 +29,11 @@ pub struct PlaybookService;
 
 impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
-        let mut title = String::new();
-        let mut description = String::new();
+        let repo = repo(&req.repo)?;
+        let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
+        let description= repository.and_then(|r|r.description).unwrap_or_default();
+        let payload = PlaybookPayload { title:repo, description, preface: Preface::repository(&req.repo) };
 
-        let repo = repo(&req.repo).unwrap_or_default();
-        let repository = ctx.github_client.repositories().find(&repo).ok().unwrap_or_default();
-        match repository {
-            Some(repository) => {
-                title = repo;
-                description = repository.description;
-            }
-            None => {
-                info!("Not found github repositories in {}...", repo);
-            }
-        }
-        let payload = PlaybookPayload { title, description, preface: Preface::repository(&req.repo) };
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }
 
