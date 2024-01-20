@@ -14,6 +14,7 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::{PlaybookSpec, Preface};
+use amp_common::schema::GitReference;
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -22,7 +23,7 @@ use uuid::Uuid;
 use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
-use crate::requests::playbook::{CreatePlaybookRequest, GitReferenceMethods};
+use crate::requests::playbook::CreatePlaybookRequest;
 use crate::utils::repo;
 
 pub struct PlaybookService;
@@ -34,7 +35,11 @@ impl PlaybookService {
         let description = repository.and_then(|r| r.description).unwrap_or_default();
         let preface = Preface {
             name: req.repo.clone(),
-            repository: Some(GitReferenceMethods::new(req.repo.clone(), req.reference.clone())),
+            repository: Some(GitReference {
+                repo: req.repo.clone(),
+                branch: req.reference.clone(),
+                ..GitReference::default()
+            }),
             ..Preface::default()
         };
         let payload = PlaybookPayload { title: repo, description, preface };

@@ -20,11 +20,3 @@ pub struct CreatePlaybookRequest {
     pub repo: String,
     pub reference: Option<String>,
 }
-pub trait GitReferenceMethods {
-    fn new(repo: String, branch: Option<String>) -> Self;
-}
-impl GitReferenceMethods for amp_common::schema::GitReference {
-    fn new(repo: String, branch: Option<String>) -> Self {
-        amp_common::schema::GitReference { repo, branch, ..Default::default() }
-    }
-}

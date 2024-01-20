@@ -49,7 +49,7 @@ pub async fn get(
     Path((id, reference, path)): Path<(Uuid, String, Option<String>)>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::get(ctx, id, reference, path, params).await?))
+    Ok(Json(FolderService::get(ctx, id, reference, path, params.get("recursive")).await?))
 }
 
 /// Create a folder
