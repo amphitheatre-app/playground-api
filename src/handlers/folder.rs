@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
@@ -45,12 +46,10 @@ use crate::services::FolderService;
 )]
 pub async fn get(
     State(ctx): State<Arc<Context>>,
-
-    Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
-    Path(path): Path<String>,
+    Path((id, reference, path)): Path<(Uuid, String, Option<String>)>,
+    Query(params): Query<HashMap<String, String>>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::get(ctx, id, reference, path).await?))
+    Ok(Json(FolderService::get(ctx, id, reference, path, params.get("recursive")).await?))
 }
 
 /// Create a folder

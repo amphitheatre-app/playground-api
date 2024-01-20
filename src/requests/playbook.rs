@@ -18,4 +18,5 @@ use utoipa::ToSchema;
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct CreatePlaybookRequest {
     pub repo: String,
+    pub reference: Option<String>,
 }

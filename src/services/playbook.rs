@@ -14,6 +14,7 @@
 
 use amp_client::playbooks::PlaybookPayload;
 use amp_common::resource::{PlaybookSpec, Preface};
+use amp_common::schema::GitReference;
 use std::sync::Arc;
 use tracing::{error, info};
 
@@ -31,8 +32,17 @@ impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         let repo = repo(&req.repo)?;
         let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
-        let description = repository.and_then(|r| Option::from(r.name)).unwrap_or_default();
-        let payload = PlaybookPayload { title: repo, description, preface: Preface::repository(&req.repo) };
+        let description = repository.and_then(|r| r.description).unwrap_or_default();
+        let preface = Preface {
+            name: req.repo.clone(),
+            repository: Some(GitReference {
+                repo: req.repo.clone(),
+                branch: req.reference.clone(),
+                ..GitReference::default()
+            }),
+            ..Preface::default()
+        };
+        let payload = PlaybookPayload { title: repo, description, preface };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
     }

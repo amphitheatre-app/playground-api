@@ -25,15 +25,25 @@ use crate::utils;
 pub struct FolderService;
 
 impl FolderService {
-    // @FIXME: pass path to get_trees() method.
-    // @TODO: add recursive option argument to current method.
-    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, _path: String) -> Result<Tree> {
+    pub async fn get(
+        ctx: Arc<Context>,
+        id: Uuid,
+        _reference: String,
+        path: Option<String>,
+        recursive: Option<&String>,
+    ) -> Result<Tree> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
 
+        let content = ctx
+            .github_client
+            .contents()
+            .find(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.branch.unwrap_or_default())
+            .map_err(|e| ApiError::NotFoundContent(e.to_string()))?;
+
         ctx.github_client
             .git()
-            .git_trees(&utils::repo(&source.repo)?, &reference, Some(true))
+            .get_tree(&utils::repo(&source.repo)?, &content.sha, Option::from(recursive.is_some()))
             .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }
