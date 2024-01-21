@@ -34,6 +34,7 @@ use crate::{handlers, requests};
         handlers::file::rename,
 
         handlers::folder::get,
+        handlers::folder::tree,
         handlers::folder::create,
         handlers::folder::delete,
         handlers::folder::copy,
@@ -63,6 +64,7 @@ use crate::{handlers, requests};
             amp_common::schema::Service,
 
             amp_common::scm::content::Content,
+            amp_common::scm::content::File,
             amp_common::scm::git::Tree,
             amp_common::scm::git::TreeEntry,
         )

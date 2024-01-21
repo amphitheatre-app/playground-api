@@ -28,7 +28,7 @@ use crate::services::FolderService;
 
 // The Folders Service Handlers.
 
-/// Returns a folder's tree.
+/// Gets the file list of a directory in a repository.
 #[utoipa::path(
     get, path = "/v1/playbooks/{id}/folders/{reference}/{path}",
     params(
@@ -37,7 +37,7 @@ use crate::services::FolderService;
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
-        (status = 200, description = "The folder tree", body = Tree),
+        (status = 200, description = "The folder tree", body = Vec<File>),
         (status = 404, description = "Playbook not found"),
         (status = 404, description = "Folder not found"),
         (status = 500, description = "Internal Server Error"),
@@ -47,9 +47,31 @@ use crate::services::FolderService;
 pub async fn get(
     State(ctx): State<Arc<Context>>,
     Path((id, reference, path)): Path<(Uuid, String, Option<String>)>,
+) -> Result<impl IntoResponse> {
+    Ok(Json(FolderService::get(ctx, id, reference, path).await?))
+}
+
+/// Returns a folder's tree.
+
+#[utoipa::path(
+    get, path = "/v1/playbooks/{id}/tree",
+    params(
+        ("id" = Uuid, description = "The id of playbook"),
+    ),
+    responses(
+        (status = 200, description = "The folder tree", body = Tree),
+        (status = 404, description = "Playbook not found"),
+        (status = 404, description = "Folder not found"),
+        (status = 500, description = "Internal Server Error"),
+    ),
+    tag = "Folders"
+)]
+pub async fn tree(
+    State(ctx): State<Arc<Context>>,
+    Path(id): Path<Uuid>,
     Query(params): Query<HashMap<String, String>>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::get(ctx, id, reference, path, params.get("recursive")).await?))
+    Ok(Json(FolderService::tree(ctx, id, params.get("recursive")).await?))
 }
 
 /// Create a folder

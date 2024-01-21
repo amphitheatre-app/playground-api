@@ -40,6 +40,7 @@ pub fn build() -> Router<Arc<Context>> {
         //
         // folders
         .route("/v1/playbooks/:id/folders/:reference/:path", get(folder::get))
+        .route("/v1/playbooks/:id/tree", get(folder::tree))
         .route("/v1/playbooks/:id/folders/:reference/:path", post(folder::create))
         .route("/v1/playbooks/:id/folders/:reference/:path", delete(folder::delete))
         .route("/v1/playbooks/:id/folders/:reference/:path/actions/copy", post(folder::copy))

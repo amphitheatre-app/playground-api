@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use amp_common::scm::git::Tree;
 use std::sync::Arc;
 use uuid::Uuid;
 
-use amp_common::scm::content::Content;
+use amp_common::scm::content::{Content, File};
+use amp_common::scm::git::Tree;
 
 use crate::context::Context;
 use crate::errors::{ApiError, Result};
@@ -30,20 +30,27 @@ impl FolderService {
         id: Uuid,
         _reference: String,
         path: Option<String>,
-        recursive: Option<&String>,
-    ) -> Result<Tree> {
+    ) -> Result<Vec<File>, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
 
-        let content = ctx
-            .github_client
+        ctx.github_client
             .contents()
-            .find(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.branch.unwrap_or_default())
-            .map_err(|e| ApiError::NotFoundContent(e.to_string()))?;
+            .list(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.branch.unwrap_or_default())
+            .map_err(|e| ApiError::NotFoundContent(e.to_string()))
+    }
+
+    pub async fn tree(ctx: Arc<Context>, id: Uuid, recursive: Option<&String>) -> Result<Tree, ApiError> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+        let source = playbook.preface.repository.unwrap();
 
         ctx.github_client
             .git()
-            .get_tree(&utils::repo(&source.repo)?, &content.sha, Option::from(recursive.is_some()))
+            .get_tree(
+                &utils::repo(&source.repo)?,
+                &source.branch.unwrap_or_default(),
+                Option::from(recursive.is_some()),
+            )
             .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }
