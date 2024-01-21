@@ -30,10 +30,9 @@ use crate::services::FolderService;
 
 /// Gets the file list of a directory in a repository.
 #[utoipa::path(
-    get, path = "/v1/playbooks/{id}/folders/{reference}/{path}",
+    get, path = "/v1/playbooks/{id}/folders/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
@@ -46,9 +45,9 @@ use crate::services::FolderService;
 )]
 pub async fn get(
     State(ctx): State<Arc<Context>>,
-    Path((id, reference, path)): Path<(Uuid, String, Option<String>)>,
+    Path((id, path)): Path<(Uuid, Option<String>)>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::get(ctx, id, reference, path).await?))
+    Ok(Json(FolderService::get(ctx, id, path).await?))
 }
 
 /// Returns a folder's tree.
@@ -76,10 +75,9 @@ pub async fn tree(
 
 /// Create a folder
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/folders/{reference}/{path}",
+    post, path = "/v1/playbooks/{id}/folders/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
@@ -93,18 +91,16 @@ pub async fn create(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 ) -> Result<impl IntoResponse> {
-    Ok((StatusCode::CREATED, Json(FolderService::create(ctx, id, reference, path).await?)))
+    Ok((StatusCode::CREATED, Json(FolderService::create(ctx, id, path).await?)))
 }
 
 /// Delete a folder
 #[utoipa::path(
-    delete, path = "/v1/playbooks/{id}/folders/{reference}/{path}",
+    delete, path = "/v1/playbooks/{id}/folders/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
@@ -119,20 +115,18 @@ pub async fn delete(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 ) -> Result<impl IntoResponse> {
-    FolderService::delete(ctx, id, reference, path).await?;
+    FolderService::delete(ctx, id, path).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }
 
 /// Copy a folder
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/folders/{reference}/{path}/actions/copy",
+    post, path = "/v1/playbooks/{id}/folders/{path}/actions/copy",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: default branch."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -152,20 +146,18 @@ pub async fn copy(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<DestinationRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::copy(ctx, id, reference, path, req.destination).await?))
+    Ok(Json(FolderService::copy(ctx, id, path, req.destination).await?))
 }
 
 /// Move a folder
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/folders/{reference}/{path}/actions/move",
+    post, path = "/v1/playbooks/{id}/folders/{path}/actions/move",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: default branch."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -185,10 +177,9 @@ pub async fn rename(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<DestinationRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FolderService::rename(ctx, id, reference, path, req.destination).await?))
+    Ok(Json(FolderService::rename(ctx, id, path, req.destination).await?))
 }

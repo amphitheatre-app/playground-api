@@ -29,10 +29,9 @@ use crate::services::FileService;
 
 /// Returns a file's content.
 #[utoipa::path(
-    get, path = "/v1/playbooks/{id}/files/{reference}/{path}",
+    get, path = "/v1/playbooks/{id}/files/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
@@ -45,17 +44,16 @@ use crate::services::FileService;
 )]
 pub async fn get(
     State(ctx): State<Arc<Context>>,
-    Path((id, reference, path)): Path<(Uuid, String, String)>,
+    Path((id, path)): Path<(Uuid, String)>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FileService::get(ctx, id, reference, path).await?))
+    Ok(Json(FileService::get(ctx, id, path).await?))
 }
 
 /// Create a file
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/files/{reference}/{path}",
+    post, path = "/v1/playbooks/{id}/files/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -74,20 +72,18 @@ pub async fn create(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<FileRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok((StatusCode::CREATED, Json(FileService::create(ctx, id, reference, path, req.content).await?)))
+    Ok((StatusCode::CREATED, Json(FileService::create(ctx, id, path, req.content).await?)))
 }
 
 /// Update a file
 #[utoipa::path(
-    put, path = "/v1/playbooks/{id}/files/{reference}/{path}",
+    put, path = "/v1/playbooks/{id}/files/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: default branch."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -107,20 +103,18 @@ pub async fn update(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<FileRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FileService::update(ctx, id, reference, path, req.content).await?))
+    Ok(Json(FileService::update(ctx, id, path, req.content).await?))
 }
 
 /// Delete a file
 #[utoipa::path(
-    delete, path = "/v1/playbooks/{id}/files/{reference}/{path}",
+    delete, path = "/v1/playbooks/{id}/files/{path}",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     responses(
@@ -135,20 +129,18 @@ pub async fn delete(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 ) -> Result<impl IntoResponse> {
-    FileService::delete(ctx, id, reference, path).await?;
+    FileService::delete(ctx, id, path).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }
 
 /// Copy a file
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/files/{reference}/{path}/actions/copy",
+    post, path = "/v1/playbooks/{id}/files/{path}/actions/copy",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: default branch."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -168,20 +160,18 @@ pub async fn copy(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<DestinationRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FileService::copy(ctx, id, reference, path, req.destination).await?))
+    Ok(Json(FileService::copy(ctx, id, path, req.destination).await?))
 }
 
 /// Move a file
 #[utoipa::path(
-    post, path = "/v1/playbooks/{id}/files/{reference}/{path}/actions/move",
+    post, path = "/v1/playbooks/{id}/files/{path}/actions/move",
     params(
         ("id" = Uuid, description = "The id of playbook"),
-        ("reference" = String, description = "The name of the commit/branch/tag. Default: default branch."),
         ("path" = String, description = "The file path relative to the root of the repository."),
     ),
     request_body(
@@ -201,10 +191,9 @@ pub async fn rename(
     State(ctx): State<Arc<Context>>,
 
     Path(id): Path<Uuid>,
-    Path(reference): Path<String>,
     Path(path): Path<String>,
 
     Json(req): Json<DestinationRequest>,
 ) -> Result<impl IntoResponse> {
-    Ok(Json(FileService::rename(ctx, id, reference, path, req.destination).await?))
+    Ok(Json(FileService::rename(ctx, id, path, req.destination).await?))
 }

@@ -31,18 +31,18 @@ pub fn build() -> Router<Arc<Context>> {
         .route("/v1/playbooks/:id/logs", get(logger::logs))
         //
         // files
-        .route("/v1/playbooks/:id/files/:reference/:path", get(file::get))
-        .route("/v1/playbooks/:id/files/:reference/:path", post(file::create))
-        .route("/v1/playbooks/:id/files/:reference/:path", put(file::update))
-        .route("/v1/playbooks/:id/files/:reference/:path", delete(file::delete))
-        .route("/v1/playbooks/:id/files/:reference/:path/actions/copy", post(file::copy))
-        .route("/v1/playbooks/:id/files/:reference/:path/actions/move", post(file::rename))
+        .route("/v1/playbooks/:id/files/:path", get(file::get))
+        .route("/v1/playbooks/:id/files/:path", post(file::create))
+        .route("/v1/playbooks/:id/files/:path", put(file::update))
+        .route("/v1/playbooks/:id/files/:path", delete(file::delete))
+        .route("/v1/playbooks/:id/files/:path/actions/copy", post(file::copy))
+        .route("/v1/playbooks/:id/files/:path/actions/move", post(file::rename))
         //
         // folders
-        .route("/v1/playbooks/:id/folders/:reference/:path", get(folder::get))
+        .route("/v1/playbooks/:id/folders/:path", get(folder::get))
         .route("/v1/playbooks/:id/tree", get(folder::tree))
-        .route("/v1/playbooks/:id/folders/:reference/:path", post(folder::create))
-        .route("/v1/playbooks/:id/folders/:reference/:path", delete(folder::delete))
-        .route("/v1/playbooks/:id/folders/:reference/:path/actions/copy", post(folder::copy))
-        .route("/v1/playbooks/:id/folders/:reference/:path/actions/move", post(folder::rename))
+        .route("/v1/playbooks/:id/folders/:path", post(folder::create))
+        .route("/v1/playbooks/:id/folders/:path", delete(folder::delete))
+        .route("/v1/playbooks/:id/folders/:path/actions/copy", post(folder::copy))
+        .route("/v1/playbooks/:id/folders/:path/actions/move", post(folder::rename))
 }

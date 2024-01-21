@@ -28,7 +28,6 @@ impl FolderService {
     pub async fn get(
         ctx: Arc<Context>,
         id: Uuid,
-        _reference: String,
         path: Option<String>,
     ) -> Result<Vec<File>, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
@@ -55,18 +54,17 @@ impl FolderService {
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }
 
-    pub async fn create(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<Content> {
+    pub async fn create(_ctx: Arc<Context>, _id: Uuid, _path: String) -> Result<Content> {
         todo!()
     }
 
-    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<()> {
+    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _path: String) -> Result<()> {
         todo!()
     }
 
     pub async fn copy(
         _ctx: Arc<Context>,
         _id: Uuid,
-        _reference: String,
         _path: String,
         _destination: String,
     ) -> Result<Content> {
@@ -76,7 +74,6 @@ impl FolderService {
     pub async fn rename(
         _ctx: Arc<Context>,
         _id: Uuid,
-        _reference: String,
         _path: String,
         _destination: String,
     ) -> Result<Content> {
