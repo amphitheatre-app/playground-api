@@ -42,10 +42,7 @@ use crate::services::FileService;
     ),
     tag = "Files"
 )]
-pub async fn get(
-    State(ctx): State<Arc<Context>>,
-    Path((id, path)): Path<(Uuid, String)>,
-) -> Result<impl IntoResponse> {
+pub async fn get(State(ctx): State<Arc<Context>>, Path((id, path)): Path<(Uuid, String)>) -> Result<impl IntoResponse> {
     Ok(Json(FileService::get(ctx, id, path).await?))
 }
 

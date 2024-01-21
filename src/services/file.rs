@@ -38,12 +38,7 @@ impl FileService {
     }
 
     /// Create a file to the workspace.
-    pub async fn create(
-        ctx: Arc<Context>,
-        id: Uuid,
-        path: String,
-        content: String,
-    ) -> Result<Content> {
+    pub async fn create(ctx: Arc<Context>, id: Uuid, path: String, content: String) -> Result<Content> {
         let data = content.into_bytes();
         let req = Synchronization {
             kind: EventKinds::Create,
@@ -60,12 +55,7 @@ impl FileService {
     }
 
     /// Update a file to the workspace.
-    pub async fn update(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _path: String,
-        _content: String,
-    ) -> Result<Content> {
+    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _path: String, _content: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }
@@ -77,23 +67,13 @@ impl FileService {
     }
 
     /// Copy a file to the destination path on the workspace.
-    pub async fn copy(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn copy(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }
 
     /// Move a file to the destination path on the workspace.
-    pub async fn rename(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn rename(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }

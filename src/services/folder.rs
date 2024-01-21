@@ -25,11 +25,7 @@ use crate::utils;
 pub struct FolderService;
 
 impl FolderService {
-    pub async fn get(
-        ctx: Arc<Context>,
-        id: Uuid,
-        path: Option<String>,
-    ) -> Result<Vec<File>, ApiError> {
+    pub async fn get(ctx: Arc<Context>, id: Uuid, path: Option<String>) -> Result<Vec<File>, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
 
@@ -62,21 +58,11 @@ impl FolderService {
         todo!()
     }
 
-    pub async fn copy(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn copy(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         todo!()
     }
 
-    pub async fn rename(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn rename(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         todo!()
     }
 }
