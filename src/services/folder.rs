@@ -21,27 +21,32 @@ use amp_common::scm::git::Tree;
 use crate::context::Context;
 use crate::errors::{ApiError, Result};
 use crate::utils;
+use crate::utils::unwrap_or_error;
 
 pub struct FolderService;
 
 impl FolderService {
-    pub async fn get(ctx: Arc<Context>, id: Uuid, path: Option<String>) -> Result<Vec<File>, ApiError> {
+    pub async fn get(ctx: Arc<Context>, id: Uuid, path: String) -> Result<Vec<File>, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
-        let source = playbook.preface.repository.unwrap();
+
+        let source = unwrap_or_error(playbook.preface.repository, "The repository is none")?;
+        let reference = unwrap_or_error(source.reference(), "The reference is none")?;
 
         ctx.github_client
             .contents()
-            .list(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.reference().unwrap())
+            .list(&utils::repo(&source.repo)?, &path, &reference)
             .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
     pub async fn tree(ctx: Arc<Context>, id: Uuid, recursive: Option<&String>) -> Result<Tree, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
-        let source = playbook.preface.repository.unwrap();
+
+        let source = unwrap_or_error(playbook.preface.repository, "The repository is none")?;
+        let reference = unwrap_or_error(source.reference(), "The reference is none")?;
 
         ctx.github_client
             .git()
-            .get_tree(&utils::repo(&source.repo)?, &source.reference().unwrap(), Option::from(recursive.is_some()))
+            .get_tree(&utils::repo(&source.repo)?, &reference, Option::from(recursive.is_some()))
             .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }

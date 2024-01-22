@@ -24,3 +24,9 @@ pub fn repo(url: &str) -> Result<String> {
 
     Ok(repo)
 }
+pub fn unwrap_or_error<T>(option: Option<T>, error_message: &str) -> Result<T, ApiError> {
+    match option {
+        Some(value) => Ok(value),
+        None => Err(ApiError::BadPlaybookRequest(error_message.to_string())),
+    }
+}

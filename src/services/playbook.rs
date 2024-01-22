@@ -41,9 +41,7 @@ impl PlaybookService {
             ..GitReference::default()
         };
         if repository.reference().is_none() {
-            return Err(ApiError::BadPlaybookRequest(
-                "branch tag rev All three fields cannot be empty, as long as one of them has a value".to_string(),
-            ));
+            return Err(ApiError::BadPlaybookRequest("Requires either branch, tag or rev".to_string()));
         }
         let preface = Preface { name: req.repo.clone(), repository: Some(repository), ..Preface::default() };
         let payload = PlaybookPayload { title: repo, description, preface };

@@ -43,10 +43,7 @@ use crate::services::FolderService;
     ),
     tag = "Folders"
 )]
-pub async fn get(
-    State(ctx): State<Arc<Context>>,
-    Path((id, path)): Path<(Uuid, Option<String>)>,
-) -> Result<impl IntoResponse> {
+pub async fn get(State(ctx): State<Arc<Context>>, Path((id, path)): Path<(Uuid, String)>) -> Result<impl IntoResponse> {
     Ok(Json(FolderService::get(ctx, id, path).await?))
 }
 
