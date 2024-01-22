@@ -27,24 +27,18 @@ pub struct FileService;
 
 impl FileService {
     /// Get a file content from the remote git repository.
-    pub async fn get(ctx: Arc<Context>, id: Uuid, reference: String, path: String) -> Result<Content> {
+    pub async fn get(ctx: Arc<Context>, id: Uuid, path: String) -> Result<Content> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
 
         ctx.github_client
             .contents()
-            .find(&utils::repo(&source.repo)?, &path, &reference)
+            .find(&utils::repo(&source.repo)?, &path, &source.branch.unwrap_or_default())
             .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
     /// Create a file to the workspace.
-    pub async fn create(
-        ctx: Arc<Context>,
-        id: Uuid,
-        _reference: String,
-        path: String,
-        content: String,
-    ) -> Result<Content> {
+    pub async fn create(ctx: Arc<Context>, id: Uuid, path: String, content: String) -> Result<Content> {
         let data = content.into_bytes();
         let req = Synchronization {
             kind: EventKinds::Create,
@@ -61,43 +55,25 @@ impl FileService {
     }
 
     /// Update a file to the workspace.
-    pub async fn update(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _reference: String,
-        _path: String,
-        _content: String,
-    ) -> Result<Content> {
+    pub async fn update(_ctx: Arc<Context>, _id: Uuid, _path: String, _content: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }
 
     /// Delete a file from the workspace.
-    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<()> {
+    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _path: String) -> Result<()> {
         // refer to create() method.
         todo!()
     }
 
     /// Copy a file to the destination path on the workspace.
-    pub async fn copy(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _reference: String,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn copy(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }
 
     /// Move a file to the destination path on the workspace.
-    pub async fn rename(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _reference: String,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn rename(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         // refer to create() method.
         todo!()
     }

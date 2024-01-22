@@ -12,67 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use amp_common::scm::git::Tree;
 use std::sync::Arc;
 use uuid::Uuid;
 
-use amp_common::scm::content::Content;
+use amp_common::scm::content::{Content, File};
+use amp_common::scm::git::Tree;
 
 use crate::context::Context;
 use crate::errors::{ApiError, Result};
 use crate::utils;
+use crate::utils::unwrap_or_error;
 
 pub struct FolderService;
 
 impl FolderService {
-    pub async fn get(
-        ctx: Arc<Context>,
-        id: Uuid,
-        _reference: String,
-        path: Option<String>,
-        recursive: Option<&String>,
-    ) -> Result<Tree> {
+    pub async fn get(ctx: Arc<Context>, id: Uuid, path: String) -> Result<Vec<File>, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
-        let source = playbook.preface.repository.unwrap();
 
-        let content = ctx
-            .github_client
+        let source = unwrap_or_error(playbook.preface.repository, "The repository is none")?;
+        let reference = unwrap_or_error(source.reference(), "The reference is none")?;
+
+        ctx.github_client
             .contents()
-            .find(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.branch.unwrap_or_default())
-            .map_err(|e| ApiError::NotFoundContent(e.to_string()))?;
+            .list(&utils::repo(&source.repo)?, &path, &reference)
+            .map_err(|e| ApiError::NotFoundContent(e.to_string()))
+    }
+
+    pub async fn tree(ctx: Arc<Context>, id: Uuid, recursive: Option<&String>) -> Result<Tree, ApiError> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+
+        let source = unwrap_or_error(playbook.preface.repository, "The repository is none")?;
+        let reference = unwrap_or_error(source.reference(), "The reference is none")?;
 
         ctx.github_client
             .git()
-            .get_tree(&utils::repo(&source.repo)?, &content.sha, Option::from(recursive.is_some()))
+            .get_tree(&utils::repo(&source.repo)?, &reference, Option::from(recursive.is_some()))
             .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }
 
-    pub async fn create(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<Content> {
+    pub async fn create(_ctx: Arc<Context>, _id: Uuid, _path: String) -> Result<Content> {
         todo!()
     }
 
-    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _reference: String, _path: String) -> Result<()> {
+    pub async fn delete(_ctx: Arc<Context>, _id: Uuid, _path: String) -> Result<()> {
         todo!()
     }
 
-    pub async fn copy(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _reference: String,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn copy(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         todo!()
     }
 
-    pub async fn rename(
-        _ctx: Arc<Context>,
-        _id: Uuid,
-        _reference: String,
-        _path: String,
-        _destination: String,
-    ) -> Result<Content> {
+    pub async fn rename(_ctx: Arc<Context>, _id: Uuid, _path: String, _destination: String) -> Result<Content> {
         todo!()
     }
 }
