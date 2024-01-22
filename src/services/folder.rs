@@ -31,7 +31,7 @@ impl FolderService {
 
         ctx.github_client
             .contents()
-            .list(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.branch.unwrap_or_default())
+            .list(&utils::repo(&source.repo)?, &path.unwrap_or_default(), &source.reference().unwrap())
             .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
@@ -41,11 +41,7 @@ impl FolderService {
 
         ctx.github_client
             .git()
-            .get_tree(
-                &utils::repo(&source.repo)?,
-                &source.branch.unwrap_or_default(),
-                Option::from(recursive.is_some()),
-            )
+            .get_tree(&utils::repo(&source.repo)?, &source.reference().unwrap(), Option::from(recursive.is_some()))
             .map_err(|e| ApiError::NotFoundFolder(e.to_string()))?
             .ok_or(ApiError::NotFoundFolder("The folder is none".to_string()))
     }

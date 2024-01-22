@@ -33,15 +33,19 @@ impl PlaybookService {
         let repo = repo(&req.repo)?;
         let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
         let description = repository.and_then(|r| r.description).unwrap_or_default();
-        let preface = Preface {
-            name: req.repo.clone(),
-            repository: Some(GitReference {
-                repo: req.repo.clone(),
-                branch: req.reference.clone(),
-                ..GitReference::default()
-            }),
-            ..Preface::default()
+        let repository = GitReference {
+            repo: req.repo.clone(),
+            branch: req.branch.clone(),
+            tag: req.tag.clone(),
+            rev: req.rev.clone(),
+            ..GitReference::default()
         };
+        if repository.reference().is_none() {
+            return Err(ApiError::BadPlaybookRequest(
+                "branch tag rev All three fields cannot be empty, as long as one of them has a value".to_string(),
+            ));
+        }
+        let preface = Preface { name: req.repo.clone(), repository: Some(repository), ..Preface::default() };
         let payload = PlaybookPayload { title: repo, description, preface };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)

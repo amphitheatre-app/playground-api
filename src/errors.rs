@@ -59,6 +59,9 @@ pub enum ApiError {
 
     #[error("Not Found Repo: {0}")]
     NotFoundRepo(anyhow::Error),
+
+    #[error("Bad Playbook Request: {0}")]
+    BadPlaybookRequest(String),
 }
 
 impl IntoResponse for ApiError {
@@ -76,6 +79,7 @@ impl IntoResponse for ApiError {
             Self::FailedToSynchronize(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
             Self::BadPlaybook(e) => (StatusCode::BAD_REQUEST, e.to_string()),
             Self::NotFoundRepo(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+            Self::BadPlaybookRequest(e) => (StatusCode::BAD_REQUEST, e.to_string()),
         };
 
         error!("{} - {}", status, message);
