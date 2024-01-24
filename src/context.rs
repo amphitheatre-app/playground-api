@@ -16,6 +16,7 @@ use crate::config::Config;
 use amp_client::client::Client;
 use amp_common::scm::client::Client as ScmClient;
 use amp_common::scm::driver::github;
+use amp_common::scm::driver::github::constants::GITHUB_ENDPOINT;
 use std::sync::Arc;
 
 /// The core type through which handler functions can access common API state.
@@ -36,7 +37,7 @@ pub struct Context {
 impl Context {
     pub async fn new(config: Config) -> anyhow::Result<Context> {
         let client = Arc::new(Client::new(&config.amp_server, config.auth_token.clone()));
-        let github_client = Arc::new(ScmClient::new(github::default()));
+        let github_client = Arc::new(ScmClient::new(github::new(GITHUB_ENDPOINT, config.auth_token.clone())));
         Ok(Context { config, client, github_client })
     }
 }
