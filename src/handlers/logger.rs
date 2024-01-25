@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::convert::Infallible;
 use std::sync::Arc;
 
 use axum::extract::{Path, State};
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
+use axum::response::sse::{Event, KeepAlive, Sse};
+use futures::{Stream, StreamExt};
 use uuid::Uuid;
 
 use crate::context::Context;
-use crate::errors::Result;
+use crate::errors::{ApiError, Result};
 use crate::services::LoggerService;
 
 // The Logging Service Handlers.
@@ -37,7 +38,21 @@ use crate::services::LoggerService;
     ),
     tag = "Logging"
 )]
-pub async fn logs(Path(id): Path<Uuid>, State(ctx): State<Arc<Context>>) -> Result<impl IntoResponse> {
-    LoggerService::logs(ctx, id).await;
-    Ok(StatusCode::OK)
+pub async fn logs(
+    Path(id): Path<Uuid>,
+    State(ctx): State<Arc<Context>>,
+) -> Result<Sse<impl Stream<Item = axum::response::Result<Event, Infallible>>>, ApiError> {
+    let event_source = LoggerService::logs(ctx, id).await?;
+
+    let stream = event_source
+        .map(|line| {
+            if let Ok(reqwest_eventsource::Event::Message(message)) = line {
+                Event::default().data(message.event)
+            } else {
+                Event::default()
+            }
+        })
+        .map(Ok);
+
+    Ok(Sse::new(stream).keep_alive(KeepAlive::default()))
 }
