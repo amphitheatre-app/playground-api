@@ -12,15 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use reqwest_eventsource::EventSource;
 use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::context::Context;
+use crate::errors::ApiError;
 
 pub struct LoggerService;
 
 impl LoggerService {
-    pub async fn logs(_ctx: Arc<Context>, _id: Uuid) {
-        unreachable!()
+    pub async fn logs(ctx: Arc<Context>, id: Uuid) -> Result<EventSource, ApiError> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+
+        Ok(ctx.client.actors().logs(&id.to_string(), &playbook.title))
     }
 }

@@ -67,10 +67,7 @@ pub async fn get(State(ctx): State<Arc<Context>>, Path((id, path)): Path<(Uuid, 
 )]
 pub async fn create(
     State(ctx): State<Arc<Context>>,
-
-    Path(id): Path<Uuid>,
-    Path(path): Path<String>,
-
+    Path((id, path)): Path<(Uuid, String)>,
     Json(req): Json<FileRequest>,
 ) -> Result<impl IntoResponse> {
     Ok((StatusCode::CREATED, Json(FileService::create(ctx, id, path, req.content).await?)))

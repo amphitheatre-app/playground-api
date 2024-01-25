@@ -1820,6 +1820,7 @@ dependencies = [
  "dotenv",
  "futures",
  "headers",
+ "reqwest-eventsource",
  "serde",
  "serde_json",
  "serde_yaml",
