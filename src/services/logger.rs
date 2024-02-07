@@ -25,6 +25,11 @@ impl LoggerService {
     pub async fn logs(ctx: Arc<Context>, id: Uuid) -> Result<EventSource, ApiError> {
         let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
 
-        Ok(ctx.client.actors().logs(&id.to_string(), &playbook.title))
+        if let Some(characters) = playbook.characters {
+            let character = characters.first().unwrap();
+            Ok(ctx.client.actors().logs(&id.to_string(), &character.meta.name))
+        } else {
+            Err(ApiError::BadPlaybook("The playbook has no characters".to_string()))
+        }
     }
 }
