@@ -24,13 +24,14 @@ use crate::context::Context;
 use crate::errors::ApiError;
 use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;
-use crate::utils::repo;
+use crate::utils::{repo, unwrap_or_error};
 
 pub struct PlaybookService;
 
 impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         let repo = repo(&req.repo)?;
+        let name = unwrap_or_error(repo.split('/').nth(1), "The repo name is None")?.to_string();
         let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
         let description = repository.and_then(|r| r.description).unwrap_or_default();
         let repository = GitReference {
@@ -43,7 +44,7 @@ impl PlaybookService {
         if repository.reference().is_none() {
             return Err(ApiError::BadPlaybookRequest("Requires either branch, tag or rev".to_string()));
         }
-        let preface = Preface { name: req.repo.clone(), repository: Some(repository), ..Preface::default() };
+        let preface = Preface { name, repository: Some(repository), ..Preface::default() };
         let payload = PlaybookPayload { title: repo, description, preface };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
