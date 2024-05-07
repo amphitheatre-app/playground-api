@@ -23,7 +23,7 @@ reqwest-eventsource = "0.6.0"
 dotenv = "0.15.0"
 futures = "0.3.30"
 headers = "0.4.0"
-serde = { version = "1.0.199", features = ["derive"] }
+serde = { version = "1.0.200", features = ["derive"] }
 serde_json = "1.0.116"
 serde_yaml = "0.9.34+deprecated"
 thiserror = "1.0.59"
