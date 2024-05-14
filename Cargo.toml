@@ -34,7 +34,7 @@ tower-http = { version = "0.5.2", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 utoipa = { version = "4.2.3", features = ["axum_extras", "uuid", "chrono"] }
-utoipa-swagger-ui = { version = "7.0.0", features = ["axum"] }
+utoipa-swagger-ui = { version = "7.0.1", features = ["axum"] }
 uuid = { version = "1.8.0", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
 url = "2.5.0"
 chrono = "0.4.38"
