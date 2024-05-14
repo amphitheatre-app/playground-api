@@ -15,7 +15,7 @@ path = "src/lib.rs"
 
 [dependencies]
 amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.8.0" }
-amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.8.0" }
+amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.8.3" }
 anyhow = "1.0.83"
 axum = { version = "0.7.5" }
 clap = { version = "4.5.4", features = ["derive", "env"] }
