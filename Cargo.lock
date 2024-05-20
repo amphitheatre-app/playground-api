@@ -65,7 +65,7 @@ name = "amp-client"
 version = "0.8.1"
 source = "git+https://github.com/amphitheatre-app/amp-client-rust?tag=v0.8.1#ae4e0c13c92d402d956efaa15f2a228ae98b6b22"
 dependencies = [
- "amp-common",
+ "amp-common 0.8.3",
  "futures",
  "reqwest-eventsource",
  "serde",
@@ -77,6 +77,34 @@ dependencies = [
 name = "amp-common"
 version = "0.8.3"
 source = "git+https://github.com/amphitheatre-app/common?tag=v0.8.3#9c59e1ed87e2ce67aa10cad6f464b35c823de656"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "confy",
+ "convert_case",
+ "data-encoding",
+ "dirs",
+ "json_comments",
+ "k8s-openapi",
+ "kube",
+ "notify",
+ "oci-distribution",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml",
+ "tracing",
+ "ureq",
+ "url",
+ "utoipa",
+ "validator",
+]
+
+[[package]]
+name = "amp-common"
+version = "0.9.0"
+source = "git+https://github.com/amphitheatre-app/common?tag=v0.9.0#3221376c736d1101f8aaf410bd6462aae4c207d3"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1852,7 +1880,7 @@ name = "playground-api"
 version = "0.3.0"
 dependencies = [
  "amp-client",
- "amp-common",
+ "amp-common 0.9.0",
  "anyhow",
  "axum",
  "chrono",
