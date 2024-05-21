@@ -44,7 +44,7 @@ impl PlaybookService {
         if repository.reference().is_none() {
             return Err(ApiError::BadPlaybookRequest("Requires either branch, tag or rev".to_string()));
         }
-        let preface = Preface { name, repository: Some(repository), ..Preface::default() };
+        let preface = Preface { name: Some(name), repository: Some(repository), ..Preface::default() };
         let payload = PlaybookPayload { title: repo, description, preface };
 
         ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
