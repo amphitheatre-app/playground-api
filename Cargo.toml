@@ -24,7 +24,7 @@ dotenv = "0.15.0"
 futures = "0.3.30"
 headers = "0.4.0"
 serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.121"
+serde_json = "1.0.122"
 serde_yaml = "0.9.34+deprecated"
 thiserror = "1.0.63"
 tokio = { version = "1.39.2", features = ["full"] }
