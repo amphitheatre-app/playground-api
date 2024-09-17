@@ -18,7 +18,7 @@ amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag 
 amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.9.1" }
 anyhow = "1.0.87"
 axum = { version = "0.7.5" }
-clap = { version = "4.5.16", features = ["derive", "env"] }
+clap = { version = "4.5.17", features = ["derive", "env"] }
 reqwest-eventsource = "0.6.0"
 dotenv = "0.15.0"
 futures = "0.3.30"
