@@ -47,7 +47,7 @@ pub async fn logs(
     let stream = event_source
         .map(|line| {
             if let Ok(reqwest_eventsource::Event::Message(message)) = line {
-                Event::default().data(message.event)
+                Event::default().data(message.data)
             } else {
                 Event::default()
             }
