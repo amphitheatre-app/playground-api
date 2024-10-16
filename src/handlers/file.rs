@@ -24,6 +24,7 @@ use crate::context::Context;
 use crate::errors::Result;
 use crate::requests::file::{DestinationRequest, FileRequest};
 use crate::services::FileService;
+use amp_common::scm::content::Content;
 
 // The Files Service Handlers.
 

@@ -20,6 +20,8 @@ use axum::response::IntoResponse;
 use axum::Json;
 use uuid::Uuid;
 
+use amp_common::resource::PlaybookSpec;
+
 use crate::context::Context;
 use crate::errors::Result;
 use crate::requests::playbook::CreatePlaybookRequest;

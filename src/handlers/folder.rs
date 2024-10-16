@@ -15,6 +15,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use amp_common::scm::git::Tree;
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -25,6 +26,7 @@ use crate::context::Context;
 use crate::errors::Result;
 use crate::requests::file::DestinationRequest;
 use crate::services::FolderService;
+use amp_common::scm::content::{Content, File};
 
 // The Folders Service Handlers.
 
