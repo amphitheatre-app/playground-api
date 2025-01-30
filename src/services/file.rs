@@ -28,12 +28,13 @@ pub struct FileService;
 impl FileService {
     /// Get a file content from the remote git repository.
     pub async fn get(ctx: Arc<Context>, id: Uuid, path: String) -> Result<Content> {
-        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+        let playbook = ctx.client.playbooks().get(&id.to_string()).await.map_err(ApiError::NotFoundPlaybook)?;
         let source = playbook.preface.repository.unwrap();
 
         ctx.github_client
             .contents()
             .find(&utils::repo(&source.repo)?, &path, &source.branch.unwrap_or_default())
+            .await
             .map_err(|e| ApiError::NotFoundContent(e.to_string()))
     }
 
@@ -48,7 +49,7 @@ impl FileService {
         };
 
         // Call sync() method to create file.
-        FileService::sync(ctx, id, req)?;
+        FileService::sync(ctx, id, req).await?;
 
         // We build a content object to return, because it's just a temporary file on the workspace.
         Ok(Content { path, data, sha: String::new(), blob_id: String::new() })
@@ -79,14 +80,18 @@ impl FileService {
     }
 
     /// Sync to the workspace.
-    fn sync(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {
-        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+    async fn sync(ctx: Arc<Context>, id: Uuid, req: Synchronization) -> Result<u16> {
+        let playbook = ctx.client.playbooks().get(&id.to_string()).await.map_err(ApiError::NotFoundPlaybook)?;
 
         debug!("update playbooks in {}...", id);
 
         if let Some(characters) = playbook.characters {
             let character = characters.first().unwrap();
-            ctx.client.actors().sync(&id.to_string(), &character.meta.name, req).map_err(ApiError::FailedToSynchronize)
+            ctx.client
+                .actors()
+                .sync(&id.to_string(), &character.meta.name, req)
+                .await
+                .map_err(ApiError::FailedToSynchronize)
         } else {
             Err(ApiError::BadPlaybook("The playbook has no characters".to_string()))
         }

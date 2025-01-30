@@ -23,7 +23,7 @@ pub struct LoggerService;
 
 impl LoggerService {
     pub async fn logs(ctx: Arc<Context>, id: Uuid) -> Result<EventSource, ApiError> {
-        let playbook = ctx.client.playbooks().get(&id.to_string()).map_err(ApiError::NotFoundPlaybook)?;
+        let playbook = ctx.client.playbooks().get(&id.to_string()).await.map_err(ApiError::NotFoundPlaybook)?;
 
         if let Some(characters) = playbook.characters {
             let character = characters.first().unwrap();

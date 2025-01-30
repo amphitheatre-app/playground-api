@@ -32,7 +32,7 @@ impl PlaybookService {
     pub async fn create(ctx: Arc<Context>, req: &CreatePlaybookRequest) -> Result<PlaybookSpec> {
         let repo = repo(&req.repo)?;
         let name = unwrap_or_error(repo.split('/').nth(1), "The repo name is None")?.to_string();
-        let repository = ctx.github_client.repositories().find(&repo).map_err(ApiError::NotFoundRepo)?;
+        let repository = ctx.github_client.repositories().find(&repo).await.map_err(ApiError::NotFoundRepo)?;
         let description = repository.and_then(|r| r.description).unwrap_or_default();
         let repository = GitReference {
             repo: req.repo.clone(),
@@ -47,15 +47,15 @@ impl PlaybookService {
         let preface = Preface { name: Some(name), repository: Some(repository), ..Preface::default() };
         let payload = PlaybookPayload { title: repo, description, preface };
 
-        ctx.client.playbooks().create(payload).map_err(ApiError::FailedToCreatePlaybook)
+        ctx.client.playbooks().create(payload).await.map_err(ApiError::FailedToCreatePlaybook)
     }
 
     pub async fn delete(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
         let playbooks = ctx.client.playbooks();
-        match playbooks.get(&id.to_string()) {
+        match playbooks.get(&id.to_string()).await {
             Ok(_) => {
                 info!("delete playbooks in {}...", id);
-                playbooks.delete(&id.to_string()).map_err(ApiError::FailedToDeletePlaybook)
+                playbooks.delete(&id.to_string()).await.map_err(ApiError::FailedToDeletePlaybook)
             }
             Err(e) => {
                 error!("Not found playbooks in {}, error: {}", id, e.to_string());
@@ -66,10 +66,10 @@ impl PlaybookService {
 
     pub async fn start(ctx: Arc<Context>, id: Uuid) -> Result<u16> {
         let playbooks = ctx.client.playbooks();
-        match playbooks.get(&id.to_string()) {
+        match playbooks.get(&id.to_string()).await {
             Ok(_) => {
                 info!("Start playbooks in {}...", id);
-                playbooks.start(&id.to_string()).map_err(ApiError::FailedToStartPlaybook)
+                playbooks.start(&id.to_string()).await.map_err(ApiError::FailedToStartPlaybook)
             }
             Err(e) => {
                 error!("Not found playbooks in {}, error: {}", id, e.to_string());

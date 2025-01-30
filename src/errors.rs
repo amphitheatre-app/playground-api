@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use amp_common::http::HTTPError;
+use amp_common::scm::errors::SCMError;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
@@ -58,7 +59,7 @@ pub enum ApiError {
     BadPlaybook(String),
 
     #[error("Not Found Repo: {0}")]
-    NotFoundRepo(anyhow::Error),
+    NotFoundRepo(SCMError),
 
     #[error("Bad Playbook Request: {0}")]
     BadPlaybookRequest(String),

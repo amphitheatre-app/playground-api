@@ -36,8 +36,13 @@ pub struct Context {
 
 impl Context {
     pub async fn new(config: Config) -> anyhow::Result<Context> {
+        // Create amphitheatre client
         let client = Arc::new(Client::new(&config.amp_server, config.auth_token.clone()));
-        let github_client = Arc::new(ScmClient::new(github::new(GITHUB_ENDPOINT, config.auth_token.clone())));
+
+        // Create SCM client with GitHub driver
+        let github_driver = github::new(GITHUB_ENDPOINT, config.auth_token.clone())?;
+        let github_client = Arc::new(ScmClient::new(github_driver));
+
         Ok(Context { config, client, github_client })
     }
 }
