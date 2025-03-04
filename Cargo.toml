@@ -16,14 +16,14 @@ path = "src/lib.rs"
 [dependencies]
 amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.10.1" }
 amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.10.3" }
-anyhow = "1.0.96"
+anyhow = "1.0.97"
 axum = { version = "0.8.1" }
 clap = { version = "4.5.31", features = ["derive", "env"] }
 dotenv = "0.15.0"
 futures = "0.3.31"
 reqwest-eventsource = "0.6.0"
 serde = { version = "1.0.218", features = ["derive"] }
-serde_json = "1.0.139"
+serde_json = "1.0.140"
 thiserror = "2.0.12"
 tokio = { version = "1.42.0", features = ["full"] }
 tracing = "0.1.41"
@@ -31,4 +31,4 @@ tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 url = "2.5.4"
 utoipa = { version = "5.3.1", features = ["axum_extras", "uuid", "chrono", "macros"] }
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum", "reqwest"] }
-uuid = { version = "1.14.0", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
+uuid = { version = "1.15.1", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
