@@ -1,6 +1,6 @@
 [package]
 name = "playground-api"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/amphitheatre-app/playground-api"
@@ -14,21 +14,21 @@ name = "playground"
 path = "src/lib.rs"
 
 [dependencies]
-amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.10.1" }
-amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.10.3" }
-anyhow = "1.0.98"
-axum = { version = "0.8.4" }
-clap = { version = "4.5.38", features = ["derive", "env"] }
-dotenv = "0.15.0"
-futures = "0.3.31"
-reqwest-eventsource = "0.6.0"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-thiserror = "2.0.12"
-tokio = { version = "1.45.0", features = ["full"] }
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-url = "2.5.4"
-utoipa = { version = "5.3.1", features = ["axum_extras", "uuid", "chrono", "macros"] }
-utoipa-swagger-ui = { version = "9.0.1", features = ["axum", "reqwest"] }
-uuid = { version = "1.16.0", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
+amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.10.2" }
+amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.10.4" }
+anyhow = "1"
+axum = { version = "0.8" }
+clap = { version = "4.5", features = ["derive", "env"] }
+dotenv = "0.15"
+futures = "0.3"
+reqwest-eventsource = "0.6"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1.45", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = "2"
+utoipa = { version = "5", features = ["axum_extras", "uuid", "chrono", "macros"] }
+utoipa-swagger-ui = { version = "9", features = ["axum", "reqwest"] }
+uuid = { version = "1", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
