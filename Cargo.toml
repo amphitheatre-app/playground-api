@@ -14,7 +14,7 @@ name = "playground"
 path = "src/lib.rs"
 
 [dependencies]
-amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.10.3" }
+amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.10.4" }
 amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.10.5" }
 anyhow = "1"
 axum = { version = "0.8" }
