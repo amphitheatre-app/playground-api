@@ -64,7 +64,7 @@ jobs:
           echo "DIGEST=${digest#sha256:}" >> $GITHUB_ENV
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ env.DIGEST }}
           path: /tmp/digests/*
