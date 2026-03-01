@@ -41,7 +41,7 @@ name = "amp-client"
 version = "0.11.0"
 source = "git+https://github.com/amphitheatre-app/amp-client-rust?tag=v0.11.0#e64a542d1d8113a840d4de75fa3afc72486fd6ae"
 dependencies = [
- "amp-common",
+ "amp-common 0.11.0",
  "futures",
  "reqwest-eventsource",
  "serde",
@@ -58,7 +58,7 @@ dependencies = [
  "async-trait",
  "bytes",
  "confy",
- "convert_case",
+ "convert_case 0.10.0",
  "data-encoding",
  "dirs",
  "jiff",
@@ -73,7 +73,38 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.18",
  "tokio",
- "toml",
+ "toml 0.9.12+spec-1.1.0",
+ "tracing",
+ "url",
+ "utoipa",
+ "validator",
+]
+
+[[package]]
+name = "amp-common"
+version = "0.11.1"
+source = "git+https://github.com/amphitheatre-app/common?tag=v0.11.1#0a74d1d34f24b4c4af531f805e3346e912c2b3e3"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytes",
+ "confy",
+ "convert_case 0.11.0",
+ "data-encoding",
+ "dirs",
+ "jiff",
+ "json_comments",
+ "k8s-openapi",
+ "kube",
+ "notify",
+ "oci-distribution",
+ "reqwest 0.13.2",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml 1.0.3+spec-1.1.0",
  "tracing",
  "url",
  "utoipa",
@@ -420,7 +451,7 @@ dependencies = [
  "lazy_static",
  "serde",
  "thiserror 2.0.18",
- "toml",
+ "toml 0.9.12+spec-1.1.0",
 ]
 
 [[package]]
@@ -428,6 +459,15 @@ name = "convert_case"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "633458d4ef8c78b72454de2d54fd6ab2e60f9e02be22f3c6104cdc8a4e0fceb9"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "convert_case"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "affbf0190ed2caf063e3def54ff444b449371d55c58e513a95ab98eca50adb49"
 dependencies = [
  "unicode-segmentation",
 ]
@@ -1956,7 +1996,7 @@ name = "playground-api"
 version = "0.5.1"
 dependencies = [
  "amp-client",
- "amp-common",
+ "amp-common 0.11.1",
  "anyhow",
  "axum",
  "clap",
@@ -2877,7 +2917,22 @@ dependencies = [
  "indexmap",
  "serde_core",
  "serde_spanned",
- "toml_datetime",
+ "toml_datetime 0.7.5+spec-1.1.0",
+ "toml_parser",
+ "toml_writer",
+ "winnow",
+]
+
+[[package]]
+name = "toml"
+version = "1.0.3+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7614eaf19ad818347db24addfa201729cf2a9b6fdfd9eb0ab870fcacc606c0c"
+dependencies = [
+ "indexmap",
+ "serde_core",
+ "serde_spanned",
+ "toml_datetime 1.0.0+spec-1.1.0",
  "toml_parser",
  "toml_writer",
  "winnow",
@@ -2888,6 +2943,15 @@ name = "toml_datetime"
 version = "0.7.5+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92e1cfed4a3038bc5a127e35a2d360f145e1f4b971b551a2ba5fd7aedf7e1347"
+dependencies = [
+ "serde_core",
+]
+
+[[package]]
+name = "toml_datetime"
+version = "1.0.0+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32c2555c699578a4f59f0cc68e5116c8d7cabbd45e1409b989d4be085b53f13e"
 dependencies = [
  "serde_core",
 ]
