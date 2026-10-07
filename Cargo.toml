@@ -15,8 +15,8 @@ name = "playground"
 path = "src/lib.rs"
 
 [dependencies]
-amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.11.5" }
-amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.12.2" }
+amp-client = { git = "https://github.com/amphitheatre-app/amp-client-rust", tag = "v0.11.6" }
+amp-common = { git = "https://github.com/amphitheatre-app/common", tag = "v0.12.3" }
 anyhow = "1"
 axum = { version = "0.8" }
 clap = { version = "4.6", features = ["derive", "env"] }
@@ -30,6 +30,6 @@ tokio = { version = "1.53", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 url = "2"
-utoipa = { version = "5", features = ["axum_extras", "uuid", "chrono", "macros"] }
-utoipa-swagger-ui = { version = "9", features = ["axum", "reqwest"] }
+utoipa = { version = "6", features = ["axum_extras", "uuid", "chrono", "macros"] }
+utoipa-swagger-ui = { version = "10", features = ["axum", "vendored"] }
 uuid = { version = "1", features = ["serde", "v4", "fast-rng", "macro-diagnostics"] }
