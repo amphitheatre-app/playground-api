@@ -36,7 +36,7 @@ impl FolderService {
             .contents()
             .list(&utils::repo(&source.repo)?, &path, &reference)
             .await
-            .map_err(|e| ApiError::NotFoundContent(e.to_string()))
+            .map_err(|e| ApiError::NotFoundFolder(e.to_string()))
     }
 
     pub async fn tree(ctx: Arc<Context>, id: Uuid, recursive: Option<&String>) -> Result<Tree, ApiError> {

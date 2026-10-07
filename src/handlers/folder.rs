@@ -39,8 +39,7 @@ use amp_common::scm::content::{Content, File};
     ),
     responses(
         (status = 200, description = "The folder tree", body = Vec<File>),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "Folder not found"),
+        (status = 404, description = "Playbook or folder not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Folders"
@@ -58,8 +57,7 @@ pub async fn get(State(ctx): State<Arc<Context>>, Path((id, path)): Path<(Uuid, 
     ),
     responses(
         (status = 200, description = "The folder tree", body = Tree),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "Folder not found"),
+        (status = 404, description = "Playbook or folder not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Folders"
@@ -104,8 +102,7 @@ pub async fn create(
     ),
     responses(
         (status = 204, description = "The folder deleted successfully"),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "Folder not found"),
+        (status = 404, description = "Playbook or folder not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Folders"
@@ -135,8 +132,7 @@ pub async fn delete(
     ),
     responses(
         (status = 200, description = "The folder copied successfully", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "Folder not found"),
+        (status = 404, description = "Playbook or folder not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Folders"
@@ -166,8 +162,7 @@ pub async fn copy(
     ),
     responses(
         (status = 200, description = "The folder moved successfully", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "Folder not found"),
+        (status = 404, description = "Playbook or folder not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Folders"
