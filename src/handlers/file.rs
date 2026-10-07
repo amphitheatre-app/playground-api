@@ -37,8 +37,7 @@ use amp_common::scm::content::Content;
     ),
     responses(
         (status = 200, description = "The file content", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "File not found"),
+        (status = 404, description = "Playbook or file not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Files"
@@ -88,8 +87,7 @@ pub async fn create(
     ),
     responses(
         (status = 200, description = "The file updated successfully", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "File not found"),
+        (status = 404, description = "Playbook or file not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Files"
@@ -114,8 +112,7 @@ pub async fn update(
     ),
     responses(
         (status = 204, description = "The file deleted successfully"),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "File not found"),
+        (status = 404, description = "Playbook or file not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Files"
@@ -145,8 +142,7 @@ pub async fn delete(
     ),
     responses(
         (status = 200, description = "The file copied successfully", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "File not found"),
+        (status = 404, description = "Playbook or file not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Files"
@@ -176,8 +172,7 @@ pub async fn copy(
     ),
     responses(
         (status = 200, description = "The file moved successfully", body = Content),
-        (status = 404, description = "Playbook not found"),
-        (status = 404, description = "File not found"),
+        (status = 404, description = "Playbook or file not found"),
         (status = 500, description = "Internal Server Error"),
     ),
     tag = "Files"

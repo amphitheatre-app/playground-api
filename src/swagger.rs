@@ -79,3 +79,32 @@ struct ApiDoc;
 pub fn build() -> SwaggerUi {
     SwaggerUi::new("/swagger").url("/openapi.json", ApiDoc::openapi())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Responses are keyed by status code, so declaring `status = 404` twice for one
+    /// operation silently drops the first description. Every documented 404 must keep
+    /// the playbook branch, which the handlers check before the file or folder itself.
+    #[test]
+    fn every_documented_404_keeps_the_playbook_case() {
+        let doc = serde_json::to_value(ApiDoc::openapi()).expect("OpenAPI document should serialize");
+        let mut checked = 0;
+
+        for (path, item) in doc["paths"].as_object().expect("paths should be an object") {
+            for method in ["get", "post", "put", "delete"] {
+                let Some(operation) = item.get(method) else { continue };
+                let Some(response) = operation["responses"].get("404") else { continue };
+                let description = response["description"].as_str().unwrap_or_default();
+                assert!(
+                    description.contains("Playbook"),
+                    "{method} {path} documented a 404 that lost the playbook branch: {description:?}"
+                );
+                checked += 1;
+            }
+        }
+
+        assert_eq!(checked, 15, "15 operations should document a 404");
+    }
+}
